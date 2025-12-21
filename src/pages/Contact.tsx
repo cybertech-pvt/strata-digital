@@ -1,0 +1,266 @@
+import { useState } from "react";
+import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Clock,
+  Send,
+  Linkedin,
+  Twitter,
+  Facebook
+} from "lucide-react";
+
+const contactInfo = [
+  {
+    icon: Mail,
+    title: "Email Us",
+    details: "contact@cybervibe.com",
+    subtext: "We'll respond within 24 hours",
+  },
+  {
+    icon: Phone,
+    title: "Call Us",
+    details: "+1 (555) 123-4567",
+    subtext: "Mon-Fri, 9am-6pm EST",
+  },
+  {
+    icon: MapPin,
+    title: "Visit Us",
+    details: "Technology Park, Suite 500",
+    subtext: "Corporate Headquarters",
+  },
+  {
+    icon: Clock,
+    title: "Business Hours",
+    details: "Monday - Friday",
+    subtext: "9:00 AM - 6:00 PM EST",
+  },
+];
+
+const offices = [
+  { city: "New York", country: "USA", type: "Headquarters" },
+  { city: "London", country: "UK", type: "Regional Office" },
+  { city: "Singapore", country: "Singapore", type: "APAC Hub" },
+  { city: "Bangalore", country: "India", type: "Development Center" },
+];
+
+const Contact = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    message: "",
+  });
+  const { toast } = useToast();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .insert([formData]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for reaching out. We'll get back to you within 24 hours.",
+      });
+
+      setFormData({ name: "", email: "", company: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Layout>
+      {/* Hero */}
+      <section className="pt-32 pb-20 relative overflow-hidden">
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+              Contact Us
+            </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
+              Let's Start a Conversation
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Ready to transform your business? Get in touch with our team to discuss 
+              how we can help you achieve your technology goals.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form & Info */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16">
+            {/* Contact Form */}
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Send Us a Message</h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="John Smith"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="john@company.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company">Company Name</Label>
+                  <Input
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    placeholder="Your Company"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Tell us about your project or inquiry..."
+                    rows={6}
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full gradient-primary text-primary-foreground"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
+              </form>
+            </div>
+
+            {/* Contact Info */}
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
+              <div className="grid sm:grid-cols-2 gap-6 mb-12">
+                {contactInfo.map((item) => (
+                  <div key={item.title} className="flex gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground">{item.title}</h4>
+                      <p className="text-foreground">{item.details}</p>
+                      <p className="text-sm text-muted-foreground">{item.subtext}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Global Offices */}
+              <h3 className="text-xl font-bold text-foreground mb-4">Global Offices</h3>
+              <div className="grid sm:grid-cols-2 gap-4 mb-8">
+                {offices.map((office) => (
+                  <div key={office.city} className="bg-secondary/50 p-4 rounded-xl">
+                    <h4 className="font-semibold text-foreground">{office.city}</h4>
+                    <p className="text-sm text-muted-foreground">{office.country}</p>
+                    <span className="text-xs text-primary">{office.type}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Social Links */}
+              <h3 className="text-xl font-bold text-foreground mb-4">Follow Us</h3>
+              <div className="flex gap-3">
+                <a
+                  href="#"
+                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a
+                  href="#"
+                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  aria-label="Twitter"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+                <a
+                  href="#"
+                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Map Placeholder */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="bg-muted rounded-3xl h-[400px] flex items-center justify-center">
+            <div className="text-center">
+              <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Interactive Map Coming Soon</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+};
+
+export default Contact;
