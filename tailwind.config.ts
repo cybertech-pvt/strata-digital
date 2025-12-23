@@ -57,6 +57,22 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // CYBERVIBE custom colors
+        navy: {
+          DEFAULT: "hsl(210 50% 8%)",
+          light: "hsl(210 45% 12%)",
+          medium: "hsl(210 40% 18%)",
+        },
+        teal: {
+          DEFAULT: "hsl(195 60% 40%)",
+          light: "hsl(195 55% 50%)",
+          dark: "hsl(195 65% 30%)",
+        },
+        lime: {
+          DEFAULT: "hsl(75 70% 50%)",
+          light: "hsl(75 65% 60%)",
+          dark: "hsl(75 75% 40%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -120,10 +136,18 @@ export default {
         },
         "pulse-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px hsl(276 100% 50% / 0.3)",
+            boxShadow: "0 0 20px hsl(195 60% 40% / 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 40px hsl(276 100% 50% / 0.5)",
+            boxShadow: "0 0 40px hsl(75 70% 50% / 0.5)",
+          },
+        },
+        shimmer: {
+          "0%": {
+            backgroundPosition: "-200% 0",
+          },
+          "100%": {
+            backgroundPosition: "200% 0",
           },
         },
       },
@@ -135,6 +159,7 @@ export default {
         "scale-in": "scale-in 0.5s ease-out forwards",
         float: "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        shimmer: "shimmer 3s ease-in-out infinite",
       },
     },
   },

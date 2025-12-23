@@ -97,17 +97,18 @@ const Contact = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
+      <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+            <span className="text-lime font-semibold text-sm uppercase tracking-wider">
               Contact Us
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
               Let's Start a Conversation
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-white/70 text-lg max-w-2xl mx-auto">
               Ready to transform your business? Get in touch with our team to discuss 
               how we can help you achieve your technology goals.
             </p>
@@ -116,7 +117,7 @@ const Contact = () => {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-20">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16">
             {/* Contact Form */}
@@ -133,6 +134,7 @@ const Contact = () => {
                       onChange={handleChange}
                       placeholder="John Smith"
                       required
+                      className="border-border focus:border-teal"
                     />
                   </div>
                   <div className="space-y-2">
@@ -145,6 +147,7 @@ const Contact = () => {
                       onChange={handleChange}
                       placeholder="john@company.com"
                       required
+                      className="border-border focus:border-teal"
                     />
                   </div>
                 </div>
@@ -156,6 +159,7 @@ const Contact = () => {
                     value={formData.company}
                     onChange={handleChange}
                     placeholder="Your Company"
+                    className="border-border focus:border-teal"
                   />
                 </div>
                 <div className="space-y-2">
@@ -168,12 +172,13 @@ const Contact = () => {
                     placeholder="Tell us about your project or inquiry..."
                     rows={6}
                     required
+                    className="border-border focus:border-teal"
                   />
                 </div>
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full gradient-primary text-primary-foreground"
+                  className="w-full gradient-cta text-white hover:opacity-90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -194,8 +199,8 @@ const Contact = () => {
               <div className="grid sm:grid-cols-2 gap-6 mb-12">
                 {contactInfo.map((item) => (
                   <div key={item.title} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-6 h-6 text-primary" />
+                    <div className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-6 h-6 text-teal" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-foreground">{item.title}</h4>
@@ -210,10 +215,10 @@ const Contact = () => {
               <h3 className="text-xl font-bold text-foreground mb-4">Global Offices</h3>
               <div className="grid sm:grid-cols-2 gap-4 mb-8">
                 {offices.map((office) => (
-                  <div key={office.city} className="bg-secondary/50 p-4 rounded-xl">
+                  <div key={office.city} className="bg-card p-4 rounded-xl border border-border hover:border-teal/30 transition-colors">
                     <h4 className="font-semibold text-foreground">{office.city}</h4>
                     <p className="text-sm text-muted-foreground">{office.country}</p>
-                    <span className="text-xs text-primary">{office.type}</span>
+                    <span className="text-xs text-lime">{office.type}</span>
                   </div>
                 ))}
               </div>
@@ -223,21 +228,21 @@ const Contact = () => {
               <div className="flex gap-3">
                 <a
                   href="#"
-                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center text-teal hover:bg-teal hover:text-white transition-colors"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
-                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center text-teal hover:bg-teal hover:text-white transition-colors"
                   aria-label="Twitter"
                 >
                   <Twitter className="w-5 h-5" />
                 </a>
                 <a
                   href="#"
-                  className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center text-teal hover:bg-teal hover:text-white transition-colors"
                   aria-label="Facebook"
                 >
                   <Facebook className="w-5 h-5" />
@@ -249,12 +254,12 @@ const Contact = () => {
       </section>
 
       {/* Map Placeholder */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="bg-muted rounded-3xl h-[400px] flex items-center justify-center">
+          <div className="bg-navy-light rounded-3xl h-[400px] flex items-center justify-center border border-teal/20">
             <div className="text-center">
-              <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Interactive Map Coming Soon</p>
+              <MapPin className="w-16 h-16 text-teal/50 mx-auto mb-4" />
+              <p className="text-white/60">Interactive Map Coming Soon</p>
             </div>
           </div>
         </div>

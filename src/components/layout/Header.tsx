@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import logoLight from "@/assets/logo-light.png";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -37,21 +38,19 @@ export const Header = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled
-          ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border"
+          ? "bg-navy/95 backdrop-blur-md shadow-lg border-b border-teal/20"
           : "bg-transparent"
       )}
     >
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">C</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-bold text-lg text-foreground">CYBERVIBE</span>
-              <span className="block text-xs text-muted-foreground -mt-1">GLOBAL SOLUTIONS</span>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logoLight} 
+              alt="CYBERVIBE Global Solutions" 
+              className="h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -63,8 +62,8 @@ export const Header = () => {
                 className={cn(
                   "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
                   location.pathname === link.path
-                    ? "text-primary bg-accent"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    ? "text-lime bg-teal/20"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
                 )}
               >
                 {link.name}
@@ -74,14 +73,14 @@ export const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <Button asChild className="gradient-primary text-primary-foreground hover:opacity-90">
+            <Button asChild className="gradient-cta text-white font-semibold hover:opacity-90 shadow-glow">
               <Link to="/contact">Get a Quote</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-foreground"
+            className="lg:hidden p-2 text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -91,7 +90,7 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 right-0 bg-background border-b border-border shadow-lg animate-fade-in">
+          <div className="lg:hidden absolute top-20 left-0 right-0 bg-navy border-b border-teal/20 shadow-lg animate-fade-in">
             <div className="container mx-auto px-4 py-4">
               <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (
@@ -101,14 +100,14 @@ export const Header = () => {
                     className={cn(
                       "px-4 py-3 text-sm font-medium rounded-lg transition-colors",
                       location.pathname === link.path
-                        ? "text-primary bg-accent"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        ? "text-lime bg-teal/20"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                     )}
                   >
                     {link.name}
                   </Link>
                 ))}
-                <Button asChild className="gradient-primary text-primary-foreground mt-4">
+                <Button asChild className="gradient-cta text-white mt-4">
                   <Link to="/contact">Get a Quote</Link>
                 </Button>
               </div>
