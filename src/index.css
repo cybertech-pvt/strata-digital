@@ -2,97 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CYBERVIBE GLOBAL SOLUTIONS - Accenture-style Purple Theme */
+/* CYBERVIBE GLOBAL SOLUTIONS - Navy/Teal/Lime Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    /* Light mode - Clean professional look */
+    --background: 210 20% 98%;
+    --foreground: 210 50% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 210 50% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 210 50% 10%;
 
-    /* Accenture Purple */
-    --primary: 276 100% 50%;
+    /* CYBERVIBE Teal Blue */
+    --primary: 195 60% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 10%;
+    /* Lime Green Accent */
+    --accent-lime: 75 70% 50%;
+    --accent-lime-foreground: 210 50% 10%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 5% 45%;
+    --secondary: 210 15% 95%;
+    --secondary-foreground: 210 50% 10%;
 
-    --accent: 276 100% 95%;
-    --accent-foreground: 276 100% 30%;
+    --muted: 210 15% 93%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 195 50% 95%;
+    --accent-foreground: 195 60% 30%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 276 100% 50%;
+    --border: 210 15% 88%;
+    --input: 210 15% 88%;
+    --ring: 195 60% 40%;
 
     --radius: 0.5rem;
 
-    /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(276 100% 50%) 0%, hsl(290 100% 60%) 100%);
-    --gradient-dark: linear-gradient(135deg, hsl(240 10% 8%) 0%, hsl(276 50% 15%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(276 100% 50% / 0.1) 0%, transparent 50%);
+    /* CYBERVIBE Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(195 60% 45%) 0%, hsl(195 55% 35%) 50%, hsl(75 70% 50%) 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(210 50% 8%) 0%, hsl(210 40% 12%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(210 50% 8%) 0%, hsl(210 40% 15%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(195 60% 40%) 0%, hsl(120 60% 45%) 100%);
     
-    --shadow-glow: 0 0 60px hsl(276 100% 50% / 0.3);
-    --shadow-card: 0 4px 20px hsl(240 10% 10% / 0.08);
-    --shadow-card-hover: 0 8px 40px hsl(276 100% 50% / 0.15);
+    --shadow-glow: 0 0 60px hsl(195 60% 40% / 0.3);
+    --shadow-lime: 0 0 40px hsl(75 70% 50% / 0.4);
+    --shadow-card: 0 4px 20px hsl(210 50% 10% / 0.08);
+    --shadow-card-hover: 0 8px 40px hsl(195 60% 40% / 0.15);
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5% 26%;
-    --sidebar-primary: 276 100% 50%;
+    --sidebar-foreground: 210 10% 26%;
+    --sidebar-primary: 195 60% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 276 100% 95%;
-    --sidebar-accent-foreground: 276 100% 30%;
-    --sidebar-border: 240 6% 90%;
-    --sidebar-ring: 276 100% 50%;
+    --sidebar-accent: 195 50% 95%;
+    --sidebar-accent-foreground: 195 60% 30%;
+    --sidebar-border: 210 15% 88%;
+    --sidebar-ring: 195 60% 40%;
   }
 
   .dark {
-    --background: 240 10% 6%;
+    /* Dark mode - CYBERVIBE Navy background */
+    --background: 210 50% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 10%;
+    --card: 210 45% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 10%;
+    --popover: 210 45% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 276 100% 60%;
+    /* CYBERVIBE Teal Blue */
+    --primary: 195 65% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 10% 15%;
+    --secondary: 210 40% 15%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 60%;
+    --muted: 210 40% 18%;
+    --muted-foreground: 210 15% 60%;
 
-    --accent: 276 100% 20%;
-    --accent-foreground: 276 100% 80%;
+    --accent: 195 50% 20%;
+    --accent-foreground: 195 65% 70%;
 
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
-    --ring: 276 100% 60%;
+    --border: 210 35% 20%;
+    --input: 210 35% 20%;
+    --ring: 195 65% 50%;
 
-    --sidebar-background: 240 10% 8%;
+    --sidebar-background: 210 50% 6%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 276 100% 60%;
+    --sidebar-primary: 195 65% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 276 100% 20%;
-    --sidebar-accent-foreground: 276 100% 80%;
-    --sidebar-border: 240 10% 20%;
-    --sidebar-ring: 276 100% 60%;
+    --sidebar-accent: 195 50% 20%;
+    --sidebar-accent-foreground: 195 65% 70%;
+    --sidebar-border: 210 35% 20%;
+    --sidebar-ring: 195 65% 50%;
   }
 }
 
@@ -123,8 +132,16 @@
     background: var(--gradient-hero);
   }
 
+  .gradient-cta {
+    background: var(--gradient-cta);
+  }
+
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-lime {
+    box-shadow: var(--shadow-lime);
   }
 
   .shadow-card {
@@ -140,6 +157,11 @@
     background: var(--gradient-primary);
   }
 
+  .text-gradient-lime {
+    @apply bg-clip-text text-transparent;
+    background: linear-gradient(135deg, hsl(195 60% 50%) 0%, hsl(75 70% 55%) 100%);
+  }
+
   .hover-lift {
     @apply transition-all duration-300 ease-out;
   }
@@ -147,6 +169,22 @@
   .hover-lift:hover {
     @apply -translate-y-1;
     box-shadow: var(--shadow-card-hover);
+  }
+
+  .bg-navy {
+    background-color: hsl(210 50% 8%);
+  }
+
+  .bg-navy-light {
+    background-color: hsl(210 45% 12%);
+  }
+
+  .text-lime {
+    color: hsl(75 70% 50%);
+  }
+
+  .bg-lime {
+    background-color: hsl(75 70% 50%);
   }
 }
 
@@ -206,10 +244,19 @@
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px hsl(276 100% 50% / 0.3);
+    box-shadow: 0 0 20px hsl(195 60% 40% / 0.3);
   }
   50% {
-    box-shadow: 0 0 40px hsl(276 100% 50% / 0.5);
+    box-shadow: 0 0 40px hsl(75 70% 50% / 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 
@@ -235,6 +282,12 @@
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, hsl(195 60% 50% / 0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 /* Stagger animations */

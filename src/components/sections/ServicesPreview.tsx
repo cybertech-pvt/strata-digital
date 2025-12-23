@@ -45,11 +45,11 @@ const services = [
 
 export const ServicesPreview = () => {
   return (
-    <section className="py-24 bg-secondary/30">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+          <span className="text-teal font-semibold text-sm uppercase tracking-wider">
             Our Services
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6">
@@ -66,13 +66,13 @@ export const ServicesPreview = () => {
           {services.map((service, index) => (
             <div
               key={service.title}
-              className="group bg-card p-8 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in-up"
+              className="group bg-card p-8 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in-up border border-border hover:border-teal/30"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <service.icon className="w-7 h-7 text-primary-foreground" />
+                <service.icon className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
+              <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-teal transition-colors">
                 {service.title}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -84,7 +84,7 @@ export const ServicesPreview = () => {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <Button asChild size="lg" variant="outline">
+          <Button asChild size="lg" className="gradient-cta text-white hover:opacity-90">
             <Link to="/services">
               View All Services
               <ArrowRight className="ml-2 h-5 w-5" />

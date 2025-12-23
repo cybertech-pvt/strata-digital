@@ -48,17 +48,18 @@ const About = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
+      <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+            <span className="text-lime font-semibold text-sm uppercase tracking-wider">
               About Us
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
               Driving Digital Excellence Since 2009
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-white/70 text-lg max-w-2xl mx-auto">
               CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED is a premier technology consulting 
               and services company, empowering enterprises to thrive in the digital age.
             </p>
@@ -67,14 +68,14 @@ const About = () => {
       </section>
 
       {/* Company Overview */}
-      <section className="py-20">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop"
                 alt="CYBERVIBE corporate headquarters building"
-                className="rounded-3xl shadow-2xl w-full object-cover"
+                className="rounded-3xl shadow-2xl w-full object-cover border border-teal/20"
               />
             </div>
             <div className="space-y-6">
@@ -94,14 +95,14 @@ const About = () => {
               </p>
               <div className="grid grid-cols-2 gap-6 pt-6">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-8 h-8 text-primary" />
+                  <Globe className="w-8 h-8 text-teal" />
                   <div>
                     <div className="font-bold text-2xl text-foreground">50+</div>
                     <div className="text-sm text-muted-foreground">Countries</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Users className="w-8 h-8 text-primary" />
+                  <Users className="w-8 h-8 text-teal" />
                   <div>
                     <div className="font-bold text-2xl text-foreground">2,000+</div>
                     <div className="text-sm text-muted-foreground">Experts</div>
@@ -114,16 +115,16 @@ const About = () => {
       </section>
 
       {/* Mission, Vision, Values */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {/* Mission */}
-            <div className="bg-card p-8 rounded-2xl shadow-card">
+            <div className="bg-navy-light p-8 rounded-2xl border border-teal/20">
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
-                <Target className="w-7 h-7 text-primary-foreground" />
+                <Target className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
+              <p className="text-white/70 leading-relaxed">
                 To empower enterprises with innovative technology solutions that drive 
                 digital transformation, enhance operational efficiency, and create 
                 lasting competitive advantages in an ever-evolving digital landscape.
@@ -131,12 +132,12 @@ const About = () => {
             </div>
 
             {/* Vision */}
-            <div className="bg-card p-8 rounded-2xl shadow-card">
+            <div className="bg-navy-light p-8 rounded-2xl border border-teal/20">
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
-                <Eye className="w-7 h-7 text-primary-foreground" />
+                <Eye className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Our Vision</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
+              <p className="text-white/70 leading-relaxed">
                 To be the world's most trusted technology partner, recognized for our 
                 unwavering commitment to innovation, excellence, and client success, 
                 shaping the future of enterprise technology.
@@ -144,12 +145,12 @@ const About = () => {
             </div>
 
             {/* Core Focus */}
-            <div className="bg-card p-8 rounded-2xl shadow-card md:col-span-2 lg:col-span-1">
+            <div className="bg-navy-light p-8 rounded-2xl border border-teal/20 md:col-span-2 lg:col-span-1">
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
-                <Heart className="w-7 h-7 text-primary-foreground" />
+                <Heart className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Core Focus</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-2xl font-bold text-white mb-4">Core Focus</h3>
+              <p className="text-white/70 leading-relaxed">
                 Client-centricity guides everything we do. We measure our success by 
                 the transformative impact we create for our clients, their customers, 
                 and the communities they serve.
@@ -159,19 +160,19 @@ const About = () => {
 
           {/* Values */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Our Core Values</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-white mb-4">Our Core Values</h2>
+            <p className="text-white/60 max-w-2xl mx-auto">
               The principles that guide our work and define who we are as an organization.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value) => (
               <div key={value.title} className="text-center p-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-accent flex items-center justify-center">
-                  <value.icon className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-teal/20 flex items-center justify-center">
+                  <value.icon className="w-8 h-8 text-teal" />
                 </div>
-                <h4 className="text-lg font-semibold text-foreground mb-2">{value.title}</h4>
-                <p className="text-sm text-muted-foreground">{value.description}</p>
+                <h4 className="text-lg font-semibold text-white mb-2">{value.title}</h4>
+                <p className="text-sm text-white/60">{value.description}</p>
               </div>
             ))}
           </div>
@@ -179,7 +180,7 @@ const About = () => {
       </section>
 
       {/* Timeline */}
-      <section className="py-20">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Our Journey</h2>
@@ -190,7 +191,7 @@ const About = () => {
           <div className="max-w-4xl mx-auto">
             <div className="relative">
               {/* Timeline Line */}
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border hidden md:block" />
+              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-teal/30 hidden md:block" />
               
               {milestones.map((milestone, index) => (
                 <div 
@@ -201,8 +202,8 @@ const About = () => {
                   {/* Timeline Dot */}
                   <div className="hidden md:block absolute left-6 top-0 w-4 h-4 rounded-full gradient-primary" />
                   
-                  <div className="bg-card p-6 rounded-2xl shadow-card">
-                    <span className="text-primary font-bold text-lg">{milestone.year}</span>
+                  <div className="bg-card p-6 rounded-2xl shadow-card border border-border hover:border-teal/30 transition-colors">
+                    <span className="text-lime font-bold text-lg">{milestone.year}</span>
                     <h4 className="text-xl font-semibold text-foreground mt-2 mb-2">{milestone.title}</h4>
                     <p className="text-muted-foreground">{milestone.description}</p>
                   </div>
@@ -214,16 +215,16 @@ const About = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Ready to Partner with Us?
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
             Discover how CYBERVIBE can help transform your business through innovative 
             technology solutions.
           </p>
-          <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/90">
+          <Button asChild size="lg" className="gradient-cta text-white hover:opacity-90 shadow-glow">
             <Link to="/contact">
               Get in Touch
               <ArrowRight className="ml-2 h-5 w-5" />
