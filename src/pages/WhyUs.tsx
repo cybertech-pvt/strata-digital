@@ -93,15 +93,15 @@ const WhyUs = () => {
       </section>
 
       {/* Stats */}
-      <section className="py-16 bg-primary">
+      <section className="py-16 bg-navy">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-4xl lg:text-5xl font-bold text-primary-foreground mb-2">
+                <div className="text-4xl lg:text-5xl font-bold text-lime mb-2">
                   {stat.value}
                 </div>
-                <div className="text-primary-foreground/70">{stat.label}</div>
+                <div className="text-white/70">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -126,12 +126,12 @@ const WhyUs = () => {
                 className="bg-card p-8 rounded-2xl shadow-card hover-lift animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
-                  <item.icon className="w-7 h-7 text-primary-foreground" />
+                <div className="w-14 h-14 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center mb-6">
+                  <item.icon className="w-7 h-7 text-navy" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">{item.title}</h3>
                 <p className="text-muted-foreground mb-4">{item.description}</p>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-foreground text-sm font-medium">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime/20 text-lime text-sm font-medium">
                   {item.stats}
                 </div>
               </div>
@@ -228,16 +228,16 @@ const WhyUs = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Ready to Experience the Difference?
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
             Let us show you why leading enterprises trust CYBERVIBE for their 
             most critical technology initiatives.
           </p>
-          <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/90">
+          <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
             <Link to="/contact">
               Start Your Journey
               <ArrowRight className="ml-2 h-5 w-5" />
