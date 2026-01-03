@@ -21,35 +21,34 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    details: "contact@cybervibe.com",
+    details: "support@cybervibeglobal.com",
     subtext: "We'll respond within 24 hours",
   },
   {
     icon: Phone,
     title: "Call Us",
-    details: "+1 (555) 123-4567",
-    subtext: "Mon-Fri, 9am-6pm EST",
+    details: "+91 8248827991",
+    subtext: "Mon-Fri, 9am-6pm IST",
   },
   {
     icon: MapPin,
     title: "Visit Us",
-    details: "Technology Park, Suite 500",
+    details: "Tamil Nadu, India",
     subtext: "Corporate Headquarters",
   },
   {
     icon: Clock,
     title: "Business Hours",
     details: "Monday - Friday",
-    subtext: "9:00 AM - 6:00 PM EST",
+    subtext: "9:00 AM - 6:00 PM IST",
   },
 ];
 
 const offices = [
-  { city: "New York", country: "USA", type: "Headquarters" },
-  { city: "London", country: "UK", type: "Regional Office" },
-  { city: "Singapore", country: "Singapore", type: "APAC Hub" },
-  { city: "Bangalore", country: "India", type: "Development Center" },
+  { city: "Tamil Nadu", country: "India", type: "Headquarters" },
 ];
+
+const websiteUrl = "www.cybervibeglobal.com";
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
