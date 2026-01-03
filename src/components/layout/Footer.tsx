@@ -59,15 +59,19 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-white/70">
                 <MapPin size={16} className="text-teal" />
-                <span>Corporate Headquarters, Technology Park</span>
+                <span>Headquarters: Tamil Nadu, India</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/70">
                 <Mail size={16} className="text-teal" />
-                <span>contact@cybervibe.com</span>
+                <a href="mailto:support@cybervibeglobal.com" className="hover:text-lime transition-colors">
+                  support@cybervibeglobal.com
+                </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/70">
                 <Phone size={16} className="text-teal" />
-                <span>+1 (555) 123-4567</span>
+                <a href="tel:+918248827991" className="hover:text-lime transition-colors">
+                  +91 8248827991
+                </a>
               </div>
             </div>
           </div>

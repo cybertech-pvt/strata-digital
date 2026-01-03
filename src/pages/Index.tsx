@@ -4,6 +4,8 @@ import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import { WhyChooseUsPreview } from "@/components/sections/WhyChooseUsPreview";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { ClientsSection } from "@/components/sections/ClientsSection";
+import { BlogSection } from "@/components/sections/BlogSection";
+import { NewsletterSection } from "@/components/sections/NewsletterSection";
 import { CTASection } from "@/components/sections/CTASection";
 
 const Index = () => {
@@ -14,6 +16,8 @@ const Index = () => {
       <WhyChooseUsPreview />
       <TestimonialsSection />
       <ClientsSection />
+      <BlogSection />
+      <NewsletterSection />
       <CTASection />
     </Layout>
   );

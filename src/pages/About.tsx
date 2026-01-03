@@ -36,12 +36,10 @@ const values = [
 ];
 
 const milestones = [
-  { year: "2009", title: "Company Founded", description: "Started with a vision to transform enterprises through technology" },
-  { year: "2012", title: "Global Expansion", description: "Opened offices in North America and Europe" },
-  { year: "2015", title: "500 Clients", description: "Reached milestone of serving 500+ enterprise clients" },
-  { year: "2018", title: "AI Division Launch", description: "Established dedicated AI & Machine Learning practice" },
-  { year: "2021", title: "Cloud Excellence", description: "Achieved premier partner status with major cloud providers" },
-  { year: "2024", title: "Industry Leader", description: "Recognized as a top technology consulting firm globally" },
+  { year: "2025", title: "Company Founded", description: "Cybervibe Global Solutions Pvt Ltd incorporated in Tamil Nadu, India" },
+  { year: "2025", title: "Cybersecurity Excellence", description: "Launched end-to-end protection services including network security and vulnerability assessments" },
+  { year: "2025", title: "Cloud & IT Infrastructure", description: "Established scalable and secure IT environment solutions for businesses" },
+  { year: "2025", title: "Managed IT Services", description: "Introduced proactive monitoring and maintenance for zero downtime" },
 ];
 
 const About = () => {
@@ -54,14 +52,14 @@ const About = () => {
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-lime font-semibold text-sm uppercase tracking-wider">
-              About Us
+              Who We Are
             </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-              Driving Digital Excellence Since 2009
+              Securing Tomorrow's Technology, Today
             </h1>
             <p className="text-white/70 text-lg max-w-2xl mx-auto">
-              CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED is a premier technology consulting 
-              and services company, empowering enterprises to thrive in the digital age.
+              Cybervibe Global Solutions Pvt Ltd is a premier Information Technology and 
+              Cybersecurity firm dedicated to empowering businesses through digital transformation.
             </p>
           </div>
         </div>
@@ -74,7 +72,7 @@ const About = () => {
             <div>
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop"
-                alt="CYBERVIBE corporate headquarters building"
+                alt="CYBERVIBE headquarters in Tamil Nadu"
                 className="rounded-3xl shadow-2xl w-full object-cover border border-teal/20"
               />
             </div>
@@ -83,29 +81,29 @@ const About = () => {
                 Your Strategic Technology Partner
               </h2>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                For over 15 years, CYBERVIBE has been at the forefront of technological 
-                innovation, helping enterprises navigate complex digital transformations 
-                and achieve sustainable competitive advantages.
+                Incorporated in 2025 and headquartered in Tamil Nadu, we specialize in 
+                providing cutting-edge IT infrastructure, cloud solutions, and robust 
+                cybersecurity frameworks tailored for the modern digital era.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our team of 2,000+ certified professionals brings deep expertise across 
-                industries and technologies, delivering solutions that drive real business 
-                outcomes. From Fortune 500 corporations to innovative startups, we partner 
-                with organizations worldwide to unlock the full potential of technology.
+                In an era where cyber threats are evolving and digital infrastructure 
+                is the heart of every enterprise, Cybervibe provides the expertise, tools, 
+                and strategic vision needed to stay ahead. We don't just provide tools; 
+                we build strategic partnerships with transparency, integrity, and measurable results.
               </p>
               <div className="grid grid-cols-2 gap-6 pt-6">
                 <div className="flex items-center gap-3">
                   <Globe className="w-8 h-8 text-teal" />
                   <div>
-                    <div className="font-bold text-2xl text-foreground">50+</div>
-                    <div className="text-sm text-muted-foreground">Countries</div>
+                    <div className="font-bold text-2xl text-foreground">Tamil Nadu</div>
+                    <div className="text-sm text-muted-foreground">Headquarters</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Users className="w-8 h-8 text-teal" />
                   <div>
-                    <div className="font-bold text-2xl text-foreground">2,000+</div>
-                    <div className="text-sm text-muted-foreground">Experts</div>
+                    <div className="font-bold text-2xl text-foreground">24/7</div>
+                    <div className="text-sm text-muted-foreground">Support</div>
                   </div>
                 </div>
               </div>
@@ -125,35 +123,32 @@ const About = () => {
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
               <p className="text-white/70 leading-relaxed">
-                To empower enterprises with innovative technology solutions that drive 
-                digital transformation, enhance operational efficiency, and create 
-                lasting competitive advantages in an ever-evolving digital landscape.
+                To deliver world-class IT solutions and ironclad cybersecurity frameworks 
+                that enable our clients to innovate with confidence and operate without boundaries.
               </p>
             </div>
 
-            {/* Vision */}
+            {/* What We Do */}
             <div className="bg-navy-light p-8 rounded-2xl border border-teal/20">
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
                 <Eye className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">What We Do</h3>
               <p className="text-white/70 leading-relaxed">
-                To be the world's most trusted technology partner, recognized for our 
-                unwavering commitment to innovation, excellence, and client success, 
-                shaping the future of enterprise technology.
+                We specialize in Cybersecurity Excellence, IT Infrastructure & Cloud, 
+                Managed IT Services, and Software & Automation solutions for businesses of all sizes.
               </p>
             </div>
 
-            {/* Core Focus */}
+            {/* Why Choose Us */}
             <div className="bg-navy-light p-8 rounded-2xl border border-teal/20 md:col-span-2 lg:col-span-1">
               <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
                 <Heart className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Core Focus</h3>
+              <h3 className="text-2xl font-bold text-white mb-4">Why Choose Us</h3>
               <p className="text-white/70 leading-relaxed">
-                Client-centricity guides everything we do. We measure our success by 
-                the transformative impact we create for our clients, their customers, 
-                and the communities they serve.
+                We combine technical precision with deep understanding of business workflows, 
+                committed to transparency, integrity, and delivering measurable results.
               </p>
             </div>
           </div>
