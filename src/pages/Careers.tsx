@@ -103,7 +103,7 @@ const Careers = () => {
               Join a team of innovators and experts shaping the future of technology. 
               Grow your career while making a meaningful impact.
             </p>
-            <Button asChild size="lg" className="gradient-primary text-primary-foreground">
+            <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
               <a href="#positions">
                 View Open Positions
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -136,19 +136,19 @@ const Careers = () => {
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-1">2,000+</div>
+                  <div className="text-3xl font-bold text-lime mb-1">2,000+</div>
                   <div className="text-muted-foreground">Team Members</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-1">40+</div>
+                  <div className="text-3xl font-bold text-lime mb-1">40+</div>
                   <div className="text-muted-foreground">Nationalities</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-1">95%</div>
+                  <div className="text-3xl font-bold text-lime mb-1">95%</div>
                   <div className="text-muted-foreground">Employee Satisfaction</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-primary mb-1">4.5★</div>
+                  <div className="text-3xl font-bold text-lime mb-1">4.5★</div>
                   <div className="text-muted-foreground">Glassdoor Rating</div>
                 </div>
               </div>
@@ -183,8 +183,8 @@ const Careers = () => {
                 className="bg-card p-8 rounded-2xl shadow-card animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-6">
-                  <benefit.icon className="w-7 h-7 text-primary-foreground" />
+                <div className="w-14 h-14 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center mb-6">
+                  <benefit.icon className="w-7 h-7 text-navy" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">{benefit.title}</h3>
                 <p className="text-muted-foreground">{benefit.description}</p>
@@ -251,16 +251,16 @@ const Careers = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Ready to Make an Impact?
           </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
             Join our team of innovators and help shape the future of technology. 
             Your next great opportunity starts here.
           </p>
-          <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/90">
+          <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
             <a href="#positions">
               Explore Opportunities
               <ArrowRight className="ml-2 h-5 w-5" />

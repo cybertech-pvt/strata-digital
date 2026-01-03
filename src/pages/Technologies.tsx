@@ -131,10 +131,10 @@ const Technologies = () => {
                   {category.technologies.map((tech) => (
                     <div
                       key={tech.name}
-                      className="group relative px-4 py-2 bg-secondary rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                      className="group relative px-4 py-2 bg-secondary rounded-lg hover:bg-gradient-to-r hover:from-teal hover:to-lime hover:text-navy transition-colors cursor-default"
                     >
                       <span className="font-medium">{tech.name}</span>
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-foreground text-background text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-navy text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                         {tech.description}
                       </div>
                     </div>
@@ -179,7 +179,7 @@ const Technologies = () => {
                 {["Cloud", "AI/ML", "Security", "Mobile", "IoT", "Blockchain"].map((tech) => (
                   <div
                     key={tech}
-                    className="aspect-square bg-gradient-to-br from-accent to-secondary rounded-2xl flex items-center justify-center p-4"
+                    className="aspect-square bg-gradient-to-br from-teal/20 to-lime/20 border border-teal/30 rounded-2xl flex items-center justify-center p-4"
                   >
                     <span className="text-foreground font-semibold text-center">{tech}</span>
                   </div>
@@ -200,7 +200,7 @@ const Technologies = () => {
             Our experts can help you evaluate and implement the right technology 
             solutions for your business needs.
           </p>
-          <Button asChild size="lg" className="gradient-primary text-primary-foreground">
+          <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
             <Link to="/contact">
               Consult Our Experts
               <ArrowRight className="ml-2 h-5 w-5" />

@@ -130,12 +130,12 @@ const Industries = () => {
                     alt={`${industry.title} industry solutions`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent" />
                   <div className="absolute bottom-4 left-4 flex items-center gap-3">
-                    <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center">
-                      <industry.icon className="w-6 h-6 text-primary-foreground" />
+                    <div className="w-12 h-12 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center">
+                      <industry.icon className="w-6 h-6 text-navy" />
                     </div>
-                    <h3 className="text-xl font-bold text-background">{industry.title}</h3>
+                    <h3 className="text-xl font-bold text-white">{industry.title}</h3>
                   </div>
                 </div>
                 <div className="p-6">
@@ -156,16 +156,16 @@ const Industries = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-secondary/30">
+      <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Don't See Your Industry?
           </h2>
-          <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/70 text-lg mb-8 max-w-2xl mx-auto">
             Our expertise extends beyond these industries. Contact us to discuss 
             how we can help transform your business.
           </p>
-          <Button asChild size="lg" className="gradient-primary text-primary-foreground">
+          <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
             <Link to="/contact">
               Let's Talk
               <ArrowRight className="ml-2 h-5 w-5" />
