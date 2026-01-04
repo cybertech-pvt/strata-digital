@@ -56,7 +56,9 @@ export const NewsletterSection = () => {
         });
       }
     } catch (error) {
-      console.error("Newsletter subscription error:", error);
+      if (import.meta.env.DEV) {
+        console.error("Newsletter subscription error:", error);
+      }
       toast({
         variant: "destructive",
         title: "Subscription Failed",
