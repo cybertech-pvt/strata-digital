@@ -1,5 +1,16 @@
+import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Link } from "react-router-dom";
 import { 
   Briefcase, 
@@ -10,8 +21,25 @@ import {
   Users,
   ArrowRight,
   MapPin,
-  Clock
+  Clock,
+  X,
+  Send,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const applicationSchema = z.object({
+  position: z.string().min(1, "Please select a position"),
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().trim().email("Please enter a valid email").max(255),
+  phone: z.string().trim().min(10, "Please enter a valid phone number").max(20),
+  experience_years: z.number().min(0).max(50),
+  current_company: z.string().trim().max(100).optional(),
+  linkedin_url: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
+  cover_letter: z.string().trim().min(50, "Cover letter must be at least 50 characters").max(2000),
+});
 
 const benefits = [
   {
@@ -86,6 +114,76 @@ const openPositions = [
 ];
 
 const Careers = () => {
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    experience_years: "",
+    current_company: "",
+    linkedin_url: "",
+    cover_letter: "",
+  });
+
+  const handleApply = (positionTitle: string) => {
+    setSelectedPosition(positionTitle);
+    setShowApplicationForm(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const validatedData = applicationSchema.parse({
+        position: selectedPosition,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        experience_years: parseInt(formData.experience_years) || 0,
+        current_company: formData.current_company || undefined,
+        linkedin_url: formData.linkedin_url || undefined,
+        cover_letter: formData.cover_letter,
+      });
+
+      const { error } = await supabase.from("job_applications").insert({
+        position: validatedData.position,
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        experience_years: validatedData.experience_years,
+        current_company: validatedData.current_company || null,
+        linkedin_url: validatedData.linkedin_url || null,
+        cover_letter: validatedData.cover_letter,
+      });
+
+      if (error) throw error;
+
+      toast.success("Application submitted successfully! We'll be in touch soon.");
+      setShowApplicationForm(false);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        experience_years: "",
+        current_company: "",
+        linkedin_url: "",
+        cover_letter: "",
+      });
+      setSelectedPosition("");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error("Failed to submit application. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout>
       {/* Hero */}
@@ -229,7 +327,11 @@ const Careers = () => {
                       </span>
                     </div>
                   </div>
-                  <Button variant="outline" className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors">
+                  <Button 
+                    onClick={() => handleApply(position.title)}
+                    variant="outline" 
+                    className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                  >
                     Apply Now
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -241,14 +343,162 @@ const Careers = () => {
             <p className="text-muted-foreground mb-4">
               Don't see a position that fits? We're always looking for talented individuals.
             </p>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/contact">
-                Submit Your Resume
-              </Link>
+            <Button 
+              onClick={() => {
+                setSelectedPosition("General Application");
+                setShowApplicationForm(true);
+              }}
+              variant="outline" 
+              size="lg"
+            >
+              Submit Your Resume
             </Button>
           </div>
         </div>
       </section>
+
+      {/* Application Form Modal */}
+      {showApplicationForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-card border-b border-border p-6 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-foreground">Apply for Position</h3>
+                <p className="text-muted-foreground">{selectedPosition}</p>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setShowApplicationForm(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="john@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+91 XXXXX XXXXX"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="experience">Years of Experience *</Label>
+                  <Select 
+                    value={formData.experience_years}
+                    onValueChange={(value) => setFormData({ ...formData, experience_years: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select experience" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Fresher (0 years)</SelectItem>
+                      <SelectItem value="1">1 year</SelectItem>
+                      <SelectItem value="2">2 years</SelectItem>
+                      <SelectItem value="3">3 years</SelectItem>
+                      <SelectItem value="4">4 years</SelectItem>
+                      <SelectItem value="5">5+ years</SelectItem>
+                      <SelectItem value="10">10+ years</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="company">Current Company</Label>
+                  <Input
+                    id="company"
+                    value={formData.current_company}
+                    onChange={(e) => setFormData({ ...formData, current_company: e.target.value })}
+                    placeholder="Your current employer"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="linkedin">LinkedIn Profile</Label>
+                  <Input
+                    id="linkedin"
+                    type="url"
+                    value={formData.linkedin_url}
+                    onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                    placeholder="https://linkedin.com/in/..."
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="cover_letter">Cover Letter *</Label>
+                <Textarea
+                  id="cover_letter"
+                  value={formData.cover_letter}
+                  onChange={(e) => setFormData({ ...formData, cover_letter: e.target.value })}
+                  placeholder="Tell us about yourself, your experience, and why you're interested in this position..."
+                  rows={6}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">Minimum 50 characters</p>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => setShowApplicationForm(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Submit Application
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* CTA */}
       <section className="py-20 bg-navy">
