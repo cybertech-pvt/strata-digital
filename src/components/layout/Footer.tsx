@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Linkedin, Twitter, Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Linkedin, Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import logoDark from "@/assets/logo-dark.png";
 
 const footerLinks = {
@@ -28,10 +28,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/cybervibe-global-solutions", label: "LinkedIn" },
+  { icon: Facebook, href: "https://www.facebook.com/cybervibeglobal", label: "Facebook" },
+  { icon: Instagram, href: "https://www.instagram.com/cybervibe.global/", label: "Instagram" },
 ];
 
 export const Footer = () => {
