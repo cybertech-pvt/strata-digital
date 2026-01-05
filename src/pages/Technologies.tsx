@@ -95,17 +95,18 @@ const Technologies = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
+      <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+            <span className="text-lime font-semibold text-sm uppercase tracking-wider">
               Technologies
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
               Cutting-Edge Technology Stack
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-white/70 text-lg max-w-2xl mx-auto">
               We leverage the latest technologies and frameworks to build scalable, 
               secure, and high-performance solutions for our clients.
             </p>
