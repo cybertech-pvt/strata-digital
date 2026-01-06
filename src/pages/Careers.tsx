@@ -194,7 +194,7 @@ const Careers = () => {
             <span className="text-primary font-semibold text-sm uppercase tracking-wider">
               Careers
             </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mt-4 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
               Build Your Future With Us
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
