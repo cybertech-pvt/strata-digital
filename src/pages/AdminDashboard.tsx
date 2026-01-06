@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -20,15 +30,37 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Mail,
   Users,
   Briefcase,
   LogOut,
   RefreshCw,
   Calendar,
-  Building2,
   Phone,
   Linkedin,
+  Trash2,
+  Plus,
+  Edit,
+  Megaphone,
+  UserCog,
 } from "lucide-react";
 
 interface ContactSubmission {
@@ -57,7 +89,53 @@ interface JobApplication {
   current_company: string | null;
   linkedin_url: string | null;
   cover_letter: string;
+  status: string;
   created_at: string;
+}
+
+interface JobPost {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string | null;
+  salary_range: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+interface LeaveRequest {
+  id: string;
+  user_id: string;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  status: string;
+  created_at: string;
+}
+
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  is_published: boolean;
+  created_at: string;
+}
+
+interface UserRole {
+  id: string;
+  user_id: string;
+  role: string;
+  created_at: string;
+}
+
+interface Profile {
+  user_id: string;
+  email: string;
+  full_name: string | null;
 }
 
 const AdminDashboard = () => {
@@ -68,7 +146,35 @@ const AdminDashboard = () => {
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
   const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [userRoles, setUserRoles] = useState<UserRole[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+
+  // Form states
+  const [showJobForm, setShowJobForm] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobPost | null>(null);
+  const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
+  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
+
+  const [jobForm, setJobForm] = useState({
+    title: "",
+    department: "",
+    location: "",
+    type: "Full-time",
+    description: "",
+    requirements: "",
+    salary_range: "",
+    is_active: true,
+  });
+
+  const [announcementForm, setAnnouncementForm] = useState({
+    title: "",
+    content: "",
+    is_published: false,
+  });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -85,15 +191,34 @@ const AdminDashboard = () => {
   const fetchAllData = async () => {
     setLoadingData(true);
     try {
-      const [contactsRes, subscribersRes, applicationsRes] = await Promise.all([
+      const [
+        contactsRes,
+        subscribersRes,
+        applicationsRes,
+        jobPostsRes,
+        leaveRes,
+        announcementsRes,
+        rolesRes,
+        profilesRes,
+      ] = await Promise.all([
         supabase.from("contact_submissions").select("*").order("created_at", { ascending: false }),
         supabase.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false }),
         supabase.from("job_applications").select("*").order("created_at", { ascending: false }),
+        supabase.from("job_posts").select("*").order("created_at", { ascending: false }),
+        supabase.from("leave_requests").select("*").order("created_at", { ascending: false }),
+        supabase.from("announcements").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("*").order("created_at", { ascending: false }),
+        supabase.from("profiles").select("user_id, email, full_name"),
       ]);
 
       if (contactsRes.data) setContacts(contactsRes.data);
       if (subscribersRes.data) setSubscribers(subscribersRes.data);
       if (applicationsRes.data) setApplications(applicationsRes.data);
+      if (jobPostsRes.data) setJobPosts(jobPostsRes.data);
+      if (leaveRes.data) setLeaveRequests(leaveRes.data);
+      if (announcementsRes.data) setAnnouncements(announcementsRes.data);
+      if (rolesRes.data) setUserRoles(rolesRes.data);
+      if (profilesRes.data) setProfiles(profilesRes.data);
     } catch (error) {
       toast({
         title: "Error",
@@ -118,6 +243,199 @@ const AdminDashboard = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  // Delete handlers
+  const handleDeleteContact = async (id: string) => {
+    const { error } = await supabase.from("contact_submissions").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete contact", variant: "destructive" });
+    } else {
+      setContacts(contacts.filter((c) => c.id !== id));
+      toast({ title: "Deleted", description: "Contact submission deleted" });
+    }
+  };
+
+  const handleDeleteSubscriber = async (id: string) => {
+    const { error } = await supabase.from("newsletter_subscribers").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete subscriber", variant: "destructive" });
+    } else {
+      setSubscribers(subscribers.filter((s) => s.id !== id));
+      toast({ title: "Deleted", description: "Subscriber removed" });
+    }
+  };
+
+  const handleDeleteApplication = async (id: string) => {
+    const { error } = await supabase.from("job_applications").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete application", variant: "destructive" });
+    } else {
+      setApplications(applications.filter((a) => a.id !== id));
+      toast({ title: "Deleted", description: "Application deleted" });
+    }
+  };
+
+  const handleUpdateApplicationStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from("job_applications").update({ status }).eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+    } else {
+      setApplications(applications.map((a) => (a.id === id ? { ...a, status } : a)));
+      toast({ title: "Updated", description: `Application marked as ${status}` });
+    }
+  };
+
+  // Job post handlers
+  const handleSaveJobPost = async () => {
+    if (editingJob) {
+      const { error } = await supabase
+        .from("job_posts")
+        .update({
+          ...jobForm,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editingJob.id);
+
+      if (error) {
+        toast({ title: "Error", description: "Failed to update job post", variant: "destructive" });
+      } else {
+        toast({ title: "Updated", description: "Job post updated" });
+        fetchAllData();
+      }
+    } else {
+      const { error } = await supabase.from("job_posts").insert({
+        ...jobForm,
+        created_by: user?.id,
+      });
+
+      if (error) {
+        toast({ title: "Error", description: "Failed to create job post", variant: "destructive" });
+      } else {
+        toast({ title: "Created", description: "Job post created" });
+        fetchAllData();
+      }
+    }
+
+    setShowJobForm(false);
+    setEditingJob(null);
+    setJobForm({
+      title: "",
+      department: "",
+      location: "",
+      type: "Full-time",
+      description: "",
+      requirements: "",
+      salary_range: "",
+      is_active: true,
+    });
+  };
+
+  const handleEditJob = (job: JobPost) => {
+    setEditingJob(job);
+    setJobForm({
+      title: job.title,
+      department: job.department,
+      location: job.location,
+      type: job.type,
+      description: job.description,
+      requirements: job.requirements || "",
+      salary_range: job.salary_range || "",
+      is_active: job.is_active,
+    });
+    setShowJobForm(true);
+  };
+
+  const handleDeleteJobPost = async (id: string) => {
+    const { error } = await supabase.from("job_posts").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete job post", variant: "destructive" });
+    } else {
+      setJobPosts(jobPosts.filter((j) => j.id !== id));
+      toast({ title: "Deleted", description: "Job post deleted" });
+    }
+  };
+
+  // Announcement handlers
+  const handleSaveAnnouncement = async () => {
+    if (editingAnnouncement) {
+      const { error } = await supabase
+        .from("announcements")
+        .update({
+          ...announcementForm,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editingAnnouncement.id);
+
+      if (error) {
+        toast({ title: "Error", description: "Failed to update announcement", variant: "destructive" });
+      } else {
+        toast({ title: "Updated", description: "Announcement updated" });
+        fetchAllData();
+      }
+    } else {
+      const { error } = await supabase.from("announcements").insert({
+        ...announcementForm,
+        created_by: user?.id,
+      });
+
+      if (error) {
+        toast({ title: "Error", description: "Failed to create announcement", variant: "destructive" });
+      } else {
+        toast({ title: "Created", description: "Announcement created" });
+        fetchAllData();
+      }
+    }
+
+    setShowAnnouncementForm(false);
+    setEditingAnnouncement(null);
+    setAnnouncementForm({ title: "", content: "", is_published: false });
+  };
+
+  const handleDeleteAnnouncement = async (id: string) => {
+    const { error } = await supabase.from("announcements").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to delete announcement", variant: "destructive" });
+    } else {
+      setAnnouncements(announcements.filter((a) => a.id !== id));
+      toast({ title: "Deleted", description: "Announcement deleted" });
+    }
+  };
+
+  // Leave request handler
+  const handleUpdateLeaveStatus = async (id: string, status: string) => {
+    const { error } = await supabase
+      .from("leave_requests")
+      .update({ status, reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to update leave request", variant: "destructive" });
+    } else {
+      setLeaveRequests(leaveRequests.map((l) => (l.id === id ? { ...l, status } : l)));
+      toast({ title: "Updated", description: `Leave request ${status}` });
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-500/20 text-yellow-500";
+      case "reviewed":
+        return "bg-blue-500/20 text-blue-500";
+      case "accepted":
+      case "approved":
+        return "bg-lime/20 text-lime";
+      case "rejected":
+        return "bg-destructive/20 text-destructive";
+      default:
+        return "bg-muted text-muted-foreground";
+    }
+  };
+
+  const getProfileName = (userId: string) => {
+    const profile = profiles.find((p) => p.user_id === userId);
+    return profile?.full_name || profile?.email || userId.slice(0, 8);
   };
 
   if (loading) {
@@ -163,7 +481,7 @@ const AdminDashboard = () => {
             <div>
               <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
               <p className="text-muted-foreground">
-                Manage contact submissions, newsletter subscribers, and job applications
+                Complete control over your platform
               </p>
             </div>
             <div className="flex gap-3">
@@ -188,45 +506,56 @@ const AdminDashboard = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-card p-6 rounded-xl border border-border shadow-card">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-navy" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal to-lime rounded-lg flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-navy" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-foreground">{contacts.length}</div>
-                  <div className="text-muted-foreground text-sm">Contact Submissions</div>
+                  <div className="text-xl font-bold text-foreground">{contacts.length}</div>
+                  <div className="text-xs text-muted-foreground">Contacts</div>
                 </div>
-              </div>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-card">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-navy" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">{subscribers.length}</div>
-                  <div className="text-muted-foreground text-sm">Newsletter Subscribers</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-card">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-teal to-lime rounded-xl flex items-center justify-center">
-                  <Briefcase className="w-6 h-6 text-navy" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal to-lime rounded-lg flex items-center justify-center">
+                  <Users className="w-5 h-5 text-navy" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-foreground">{applications.length}</div>
-                  <div className="text-muted-foreground text-sm">Job Applications</div>
+                  <div className="text-xl font-bold text-foreground">{subscribers.length}</div>
+                  <div className="text-xs text-muted-foreground">Subscribers</div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal to-lime rounded-lg flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-navy" />
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-foreground">{applications.length}</div>
+                  <div className="text-xs text-muted-foreground">Applications</div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal to-lime rounded-lg flex items-center justify-center">
+                  <UserCog className="w-5 h-5 text-navy" />
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-foreground">{userRoles.length}</div>
+                  <div className="text-xs text-muted-foreground">Users</div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Tabs */}
           <Tabs defaultValue="contacts" className="space-y-6">
-            <TabsList className="bg-card border border-border">
+            <TabsList className="bg-card border border-border flex-wrap h-auto">
               <TabsTrigger value="contacts" className="gap-2">
                 <Mail className="w-4 h-4" />
                 Contacts
@@ -239,12 +568,31 @@ const AdminDashboard = () => {
                 <Briefcase className="w-4 h-4" />
                 Applications
               </TabsTrigger>
+              <TabsTrigger value="jobs" className="gap-2">
+                <Briefcase className="w-4 h-4" />
+                Job Posts
+              </TabsTrigger>
+              <TabsTrigger value="announcements" className="gap-2">
+                <Megaphone className="w-4 h-4" />
+                Announcements
+              </TabsTrigger>
+              <TabsTrigger value="leave" className="gap-2">
+                <Calendar className="w-4 h-4" />
+                Leave Requests
+              </TabsTrigger>
+              <TabsTrigger value="users" className="gap-2">
+                <UserCog className="w-4 h-4" />
+                Users
+              </TabsTrigger>
             </TabsList>
 
             {/* Contact Submissions */}
             <TabsContent value="contacts">
-              <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="overflow-x-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Submissions</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -253,12 +601,13 @@ const AdminDashboard = () => {
                         <TableHead>Company</TableHead>
                         <TableHead>Message</TableHead>
                         <TableHead>Date</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {contacts.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                             No contact submissions yet
                           </TableCell>
                         </TableRow>
@@ -276,31 +625,58 @@ const AdminDashboard = () => {
                             <TableCell className="text-muted-foreground text-sm">
                               {formatDate(contact.created_at)}
                             </TableCell>
+                            <TableCell>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Contact</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete this contact submission? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteContact(contact.id)}>
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
                   </Table>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Newsletter Subscribers */}
             <TabsContent value="subscribers">
-              <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="overflow-x-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Newsletter Subscribers</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Email</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Subscribed On</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {subscribers.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                             No newsletter subscribers yet
                           </TableCell>
                         </TableRow>
@@ -326,19 +702,45 @@ const AdminDashboard = () => {
                             <TableCell className="text-muted-foreground text-sm">
                               {formatDate(subscriber.subscribed_at)}
                             </TableCell>
+                            <TableCell>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Subscriber</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to remove this subscriber? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteSubscriber(subscriber.id)}>
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
                   </Table>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Job Applications */}
             <TabsContent value="applications">
-              <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="overflow-x-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Applications</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -346,14 +748,15 @@ const AdminDashboard = () => {
                         <TableHead>Position</TableHead>
                         <TableHead>Experience</TableHead>
                         <TableHead>Contact</TableHead>
-                        <TableHead>Cover Letter</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead>Date</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {applications.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                             No job applications yet
                           </TableCell>
                         </TableRow>
@@ -391,21 +794,514 @@ const AdminDashboard = () => {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell className="max-w-xs">
-                              <p className="text-sm text-muted-foreground line-clamp-3">
-                                {app.cover_letter}
-                              </p>
+                            <TableCell>
+                              <Select
+                                value={app.status}
+                                onValueChange={(v) => handleUpdateApplicationStatus(app.id, v)}
+                              >
+                                <SelectTrigger className="w-28">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="pending">Pending</SelectItem>
+                                  <SelectItem value="reviewed">Reviewed</SelectItem>
+                                  <SelectItem value="accepted">Accepted</SelectItem>
+                                  <SelectItem value="rejected">Rejected</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </TableCell>
                             <TableCell className="text-muted-foreground text-sm">
                               {formatDate(app.created_at)}
+                            </TableCell>
+                            <TableCell>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Application</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete this application? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeleteApplication(app.id)}>
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
                   </Table>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Job Posts */}
+            <TabsContent value="jobs">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Job Posts</CardTitle>
+                    <CardDescription>Manage job postings</CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setEditingJob(null);
+                      setJobForm({
+                        title: "",
+                        department: "",
+                        location: "",
+                        type: "Full-time",
+                        description: "",
+                        requirements: "",
+                        salary_range: "",
+                        is_active: true,
+                      });
+                      setShowJobForm(true);
+                    }}
+                    className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Job Post
+                  </Button>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {showJobForm && (
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
+                      <h3 className="font-semibold">{editingJob ? "Edit Job Post" : "Create Job Post"}</h3>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Title</Label>
+                          <Input
+                            value={jobForm.title}
+                            onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
+                            placeholder="Senior Software Engineer"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Department</Label>
+                          <Input
+                            value={jobForm.department}
+                            onChange={(e) => setJobForm({ ...jobForm, department: e.target.value })}
+                            placeholder="Engineering"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Location</Label>
+                          <Input
+                            value={jobForm.location}
+                            onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
+                            placeholder="Remote / Hybrid"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Type</Label>
+                          <Select
+                            value={jobForm.type}
+                            onValueChange={(v) => setJobForm({ ...jobForm, type: v })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Full-time">Full-time</SelectItem>
+                              <SelectItem value="Part-time">Part-time</SelectItem>
+                              <SelectItem value="Contract">Contract</SelectItem>
+                              <SelectItem value="Internship">Internship</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Salary Range</Label>
+                          <Input
+                            value={jobForm.salary_range}
+                            onChange={(e) => setJobForm({ ...jobForm, salary_range: e.target.value })}
+                            placeholder="$80k - $120k"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Description</Label>
+                        <Textarea
+                          value={jobForm.description}
+                          onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Requirements</Label>
+                        <Textarea
+                          value={jobForm.requirements}
+                          onChange={(e) => setJobForm({ ...jobForm, requirements: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleSaveJobPost} className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                          {editingJob ? "Update" : "Create"}
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowJobForm(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {jobPosts.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                            No job posts yet
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        jobPosts.map((job) => (
+                          <TableRow key={job.id}>
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.department}</TableCell>
+                            <TableCell>{job.location}</TableCell>
+                            <TableCell>{job.type}</TableCell>
+                            <TableCell>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  job.is_active
+                                    ? "bg-lime/20 text-lime"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {job.is_active ? "Active" : "Inactive"}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleEditJob(job)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Job Post</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this job post? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteJobPost(job.id)}>
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Announcements */}
+            <TabsContent value="announcements">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Announcements</CardTitle>
+                    <CardDescription>Manage company announcements for employees</CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setEditingAnnouncement(null);
+                      setAnnouncementForm({ title: "", content: "", is_published: false });
+                      setShowAnnouncementForm(true);
+                    }}
+                    className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Announcement
+                  </Button>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {showAnnouncementForm && (
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
+                      <h3 className="font-semibold">{editingAnnouncement ? "Edit Announcement" : "Create Announcement"}</h3>
+                      <div className="space-y-2">
+                        <Label>Title</Label>
+                        <Input
+                          value={announcementForm.title}
+                          onChange={(e) => setAnnouncementForm({ ...announcementForm, title: e.target.value })}
+                          placeholder="Announcement title"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Content</Label>
+                        <Textarea
+                          value={announcementForm.content}
+                          onChange={(e) => setAnnouncementForm({ ...announcementForm, content: e.target.value })}
+                          rows={5}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="is_published"
+                          checked={announcementForm.is_published}
+                          onChange={(e) => setAnnouncementForm({ ...announcementForm, is_published: e.target.checked })}
+                          className="rounded border-border"
+                        />
+                        <Label htmlFor="is_published">Publish immediately</Label>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleSaveAnnouncement} className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                          {editingAnnouncement ? "Update" : "Create"}
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowAnnouncementForm(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Content</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {announcements.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                            No announcements yet
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        announcements.map((announcement) => (
+                          <TableRow key={announcement.id}>
+                            <TableCell className="font-medium">{announcement.title}</TableCell>
+                            <TableCell className="max-w-xs truncate">{announcement.content}</TableCell>
+                            <TableCell>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  announcement.is_published
+                                    ? "bg-lime/20 text-lime"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {announcement.is_published ? "Published" : "Draft"}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {formatDate(announcement.created_at)}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    setEditingAnnouncement(announcement);
+                                    setAnnouncementForm({
+                                      title: announcement.title,
+                                      content: announcement.content,
+                                      is_published: announcement.is_published,
+                                    });
+                                    setShowAnnouncementForm(true);
+                                  }}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Announcement</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this announcement? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteAnnouncement(announcement.id)}>
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Leave Requests */}
+            <TabsContent value="leave">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Leave Requests</CardTitle>
+                  <CardDescription>Review and manage employee leave requests</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Employee</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Dates</TableHead>
+                        <TableHead>Reason</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {leaveRequests.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                            No leave requests yet
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        leaveRequests.map((request) => (
+                          <TableRow key={request.id}>
+                            <TableCell className="font-medium">{getProfileName(request.user_id)}</TableCell>
+                            <TableCell className="capitalize">{request.leave_type}</TableCell>
+                            <TableCell>
+                              {formatDate(request.start_date).split(",")[0]} - {formatDate(request.end_date).split(",")[0]}
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate">{request.reason || "-"}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(request.status)}`}>
+                                {request.status}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              {request.status === "pending" && (
+                                <div className="flex gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-lime border-lime hover:bg-lime/10"
+                                    onClick={() => handleUpdateLeaveStatus(request.id, "approved")}
+                                  >
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-destructive border-destructive hover:bg-destructive/10"
+                                    onClick={() => handleUpdateLeaveStatus(request.id, "rejected")}
+                                  >
+                                    Reject
+                                  </Button>
+                                </div>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Users */}
+            <TabsContent value="users">
+              <Card>
+                <CardHeader>
+                  <CardTitle>User Roles</CardTitle>
+                  <CardDescription>View all users and their roles</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Assigned On</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userRoles.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                            No users yet
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        userRoles.map((role) => (
+                          <TableRow key={role.id}>
+                            <TableCell className="font-medium">{getProfileName(role.user_id)}</TableCell>
+                            <TableCell>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                                  role.role === "admin"
+                                    ? "bg-primary/20 text-primary"
+                                    : role.role === "employee"
+                                    ? "bg-blue-500/20 text-blue-500"
+                                    : "bg-lime/20 text-lime"
+                                }`}
+                              >
+                                {role.role}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {formatDate(role.created_at)}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

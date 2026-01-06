@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           company: string | null
@@ -49,11 +79,14 @@ export type Database = {
           email: string
           experience_years: number
           id: string
+          job_post_id: string | null
           linkedin_url: string | null
           name: string
           phone: string
           position: string
           resume_url: string | null
+          status: string
+          user_id: string | null
         }
         Insert: {
           cover_letter: string
@@ -62,11 +95,14 @@ export type Database = {
           email: string
           experience_years: number
           id?: string
+          job_post_id?: string | null
           linkedin_url?: string | null
           name: string
           phone: string
           position: string
           resume_url?: string | null
+          status?: string
+          user_id?: string | null
         }
         Update: {
           cover_letter?: string
@@ -75,11 +111,106 @@ export type Database = {
           email?: string
           experience_years?: number
           id?: string
+          job_post_id?: string | null
           linkedin_url?: string | null
           name?: string
           phone?: string
           position?: string
           resume_url?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_post_id_fkey"
+            columns: ["job_post_id"]
+            isOneToOne: false
+            referencedRelation: "job_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_posts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: string
+          description: string
+          id: string
+          is_active: boolean
+          location: string
+          requirements: string | null
+          salary_range: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department: string
+          description: string
+          id?: string
+          is_active?: boolean
+          location: string
+          requirements?: string | null
+          salary_range?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          location?: string
+          requirements?: string | null
+          salary_range?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leave_requests: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          leave_type: string
+          reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          start_date: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          leave_type: string
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          leave_type?: string
+          reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          start_date?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -101,6 +232,54 @@ export type Database = {
           id?: string
           is_active?: boolean
           subscribed_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          current_company: string | null
+          department: string | null
+          email: string
+          full_name: string | null
+          id: string
+          linkedin_url: string | null
+          phone: string | null
+          resume_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          current_company?: string | null
+          department?: string | null
+          email: string
+          full_name?: string | null
+          id?: string
+          linkedin_url?: string | null
+          phone?: string | null
+          resume_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          current_company?: string | null
+          department?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          linkedin_url?: string | null
+          phone?: string | null
+          resume_url?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
