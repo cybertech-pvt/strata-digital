@@ -20,7 +20,7 @@ export const HeroSection = () => {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight animate-fade-in-up">
               Securing{" "}
-              <span className="text-gradient-lime text-secondary-foreground">Tomorrow's</span>
+              <span className="text-gradient-lime text-secondary-foreground bg-secondary-foreground">Tomorrow's</span>
               <br />
               <span className="text-gradient-lime text-secondary-foreground">Technology</span>
               , Today.
