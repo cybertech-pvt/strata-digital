@@ -2,10 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import bannerImage from "@/assets/banner.png";
-
 export const HeroSection = () => {
-  return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
+  return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
       {/* Background Effects */}
       <div className="absolute inset-0 gradient-hero" />
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-teal/10 rounded-full blur-3xl" />
@@ -22,9 +20,9 @@ export const HeroSection = () => {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight animate-fade-in-up">
               Securing{" "}
-              <span className="text-gradient-lime">Tomorrow's</span>
+              <span className="text-gradient-lime text-secondary-foreground">Tomorrow's</span>
               <br />
-              <span className="text-gradient-lime">Technology</span>
+              <span className="text-gradient-lime text-secondary-foreground">Technology</span>
               , Today.
             </h1>
 
@@ -70,11 +68,7 @@ export const HeroSection = () => {
           <div className="relative hidden lg:block animate-scale-in">
             <div className="relative">
               <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-50 animate-pulse-glow" />
-              <img
-                src={bannerImage}
-                alt="CYBERVIBE Global Solutions - Securing Tomorrow's Technology, Today"
-                className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20"
-              />
+              <img src={bannerImage} alt="CYBERVIBE Global Solutions - Securing Tomorrow's Technology, Today" className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20" />
               {/* Floating Card */}
               <div className="absolute -bottom-6 -left-6 bg-navy-light p-6 rounded-2xl shadow-card border border-teal/20 animate-float">
                 <div className="flex items-center gap-4">
@@ -91,6 +85,5 @@ export const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
