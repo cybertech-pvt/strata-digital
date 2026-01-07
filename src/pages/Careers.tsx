@@ -510,12 +510,29 @@ const Careers = () => {
             Join our team of innovators and help shape the future of technology. 
             Your next great opportunity starts here.
           </p>
-          <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
-            <a href="#positions">
-              Explore Opportunities
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
-          </Button>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+              <a href="#positions">
+                Explore Opportunities
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Link to="/candidate/login">
+                Candidate Portal
+                <Users className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
+          <div className="mt-8 pt-8 border-t border-white/20">
+            <p className="text-white/60 text-sm mb-3">Already part of our team?</p>
+            <Button asChild variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10">
+              <Link to="/employee/login">
+                Employee Portal
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </Layout>
