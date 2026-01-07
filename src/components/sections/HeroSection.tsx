@@ -22,7 +22,7 @@ export const HeroSection = () => {
               Securing{" "}
               <span className="text-gradient-lime text-secondary-foreground bg-secondary-foreground">Tomorrow's</span>
               <br />
-              <span className="text-gradient-lime text-secondary-foreground">Technology</span>
+              <span className="text-gradient-lime text-secondary-foreground bg-secondary-foreground">Technology</span>
               , Today.
             </h1>
 
