@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,10 @@ import {
   MapPin,
   Clock,
   Send,
+  Upload,
+  File,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 
 interface Profile {
@@ -48,6 +52,7 @@ interface Profile {
   linkedin_url: string | null;
   current_company: string | null;
   bio: string | null;
+  resume_url: string | null;
 }
 
 interface JobPost {
@@ -77,6 +82,8 @@ const CandidateDashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [applying, setApplying] = useState<string | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
+  const [uploadingResume, setUploadingResume] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     checkAuth();
@@ -151,6 +158,93 @@ const CandidateDashboard = () => {
     }
   };
 
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF or Word document");
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    setUploadingResume(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${userId}/resume.${fileExt}`;
+
+      // Delete existing resume if any
+      if (profile?.resume_url) {
+        const oldPath = profile.resume_url.split('/').slice(-2).join('/');
+        await supabase.storage.from('resumes').remove([oldPath]);
+      }
+
+      // Upload new resume
+      const { error: uploadError } = await supabase.storage
+        .from('resumes')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(filePath);
+
+      // Update profile with resume URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ resume_url: publicUrl, updated_at: new Date().toISOString() })
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => prev ? { ...prev, resume_url: publicUrl } : null);
+      toast.success("Resume uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload resume");
+    } finally {
+      setUploadingResume(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleDeleteResume = async () => {
+    if (!userId || !profile?.resume_url) return;
+
+    try {
+      const filePath = profile.resume_url.split('/').slice(-2).join('/');
+      
+      const { error: deleteError } = await supabase.storage
+        .from('resumes')
+        .remove([filePath]);
+
+      if (deleteError) throw deleteError;
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ resume_url: null, updated_at: new Date().toISOString() })
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+
+      setProfile(prev => prev ? { ...prev, resume_url: null } : null);
+      toast.success("Resume deleted");
+    } catch (error) {
+      toast.error("Failed to delete resume");
+    }
+  };
+
   const handleApply = async (job: JobPost) => {
     if (!userId || !profile) return;
 
@@ -170,6 +264,7 @@ const CandidateDashboard = () => {
       phone: profile.phone || "",
       experience_years: 0,
       cover_letter: coverLetter,
+      resume_url: profile.resume_url,
       status: "pending",
     });
 
@@ -306,14 +401,22 @@ const CandidateDashboard = () => {
                             }}
                             rows={4}
                           />
-                          <Button
-                            onClick={() => handleApply(job)}
-                            disabled={applying === job.id && coverLetter.length < 50}
-                            className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
-                          >
-                            <Send className="w-4 h-4 mr-2" />
-                            Apply Now
-                          </Button>
+                          <div className="flex items-center gap-4">
+                            <Button
+                              onClick={() => handleApply(job)}
+                              disabled={applying === job.id && coverLetter.length < 50}
+                              className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                            >
+                              <Send className="w-4 h-4 mr-2" />
+                              Apply Now
+                            </Button>
+                            {profile?.resume_url && (
+                              <span className="text-sm text-muted-foreground flex items-center gap-1">
+                                <File className="w-4 h-4" />
+                                Resume attached
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -366,64 +469,139 @@ const CandidateDashboard = () => {
             </TabsContent>
 
             <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle>My Profile</CardTitle>
-                  <CardDescription>Update your profile information</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-xl">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="full_name">Full Name</Label>
-                        <Input
-                          id="full_name"
-                          name="full_name"
-                          defaultValue={profile?.full_name || ""}
-                        />
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>My Profile</CardTitle>
+                    <CardDescription>Update your profile information</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleUpdateProfile} className="space-y-4">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="full_name">Full Name</Label>
+                          <Input
+                            id="full_name"
+                            name="full_name"
+                            defaultValue={profile?.full_name || ""}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone</Label>
+                          <Input
+                            id="phone"
+                            name="phone"
+                            defaultValue={profile?.phone || ""}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="current_company">Current Company</Label>
+                          <Input
+                            id="current_company"
+                            name="current_company"
+                            defaultValue={profile?.current_company || ""}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="linkedin_url">LinkedIn URL</Label>
+                          <Input
+                            id="linkedin_url"
+                            name="linkedin_url"
+                            defaultValue={profile?.linkedin_url || ""}
+                          />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          name="phone"
-                          defaultValue={profile?.phone || ""}
+                        <Label htmlFor="bio">Bio</Label>
+                        <Textarea
+                          id="bio"
+                          name="bio"
+                          defaultValue={profile?.bio || ""}
+                          rows={4}
                         />
                       </div>
-                    </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="current_company">Current Company</Label>
-                        <Input
-                          id="current_company"
-                          name="current_company"
-                          defaultValue={profile?.current_company || ""}
-                        />
+                      <Button type="submit" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                        Update Profile
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Resume</CardTitle>
+                    <CardDescription>Upload your resume (PDF or Word, max 5MB)</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {profile?.resume_url ? (
+                      <div className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+                            <File className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">Resume uploaded</p>
+                            <a 
+                              href={profile.resume_url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-primary hover:underline"
+                            >
+                              View Resume
+                            </a>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleDeleteResume}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="linkedin_url">LinkedIn URL</Label>
-                        <Input
-                          id="linkedin_url"
-                          name="linkedin_url"
-                          defaultValue={profile?.linkedin_url || ""}
-                        />
+                    ) : (
+                      <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                        <Upload className="w-10 h-10 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground mb-4">
+                          No resume uploaded yet
+                        </p>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">Bio</Label>
-                      <Textarea
-                        id="bio"
-                        name="bio"
-                        defaultValue={profile?.bio || ""}
-                        rows={4}
+                    )}
+
+                    <div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleResumeUpload}
+                        className="hidden"
+                        id="resume-upload"
                       />
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        className="w-full"
+                        disabled={uploadingResume}
+                      >
+                        {uploadingResume ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 mr-2" />
+                            {profile?.resume_url ? "Replace Resume" : "Upload Resume"}
+                          </>
+                        )}
+                      </Button>
                     </div>
-                    <Button type="submit" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
-                      Update Profile
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

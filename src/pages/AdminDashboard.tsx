@@ -158,6 +158,7 @@ const AdminDashboard = () => {
   const [editingJob, setEditingJob] = useState<JobPost | null>(null);
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
+  const [showRoleForm, setShowRoleForm] = useState(false);
 
   const [jobForm, setJobForm] = useState({
     title: "",
@@ -174,6 +175,11 @@ const AdminDashboard = () => {
     title: "",
     content: "",
     is_published: false,
+  });
+
+  const [roleForm, setRoleForm] = useState({
+    user_id: "",
+    role: "",
   });
 
   useEffect(() => {
@@ -414,6 +420,63 @@ const AdminDashboard = () => {
     } else {
       setLeaveRequests(leaveRequests.map((l) => (l.id === id ? { ...l, status } : l)));
       toast({ title: "Updated", description: `Leave request ${status}` });
+    }
+  };
+
+  // User role handlers
+  const handleAssignRole = async () => {
+    if (!roleForm.user_id || !roleForm.role) {
+      toast({ title: "Error", description: "Please select a user and role", variant: "destructive" });
+      return;
+    }
+
+    // Check if user already has this role
+    const existingRole = userRoles.find(
+      (r) => r.user_id === roleForm.user_id && r.role === roleForm.role
+    );
+
+    if (existingRole) {
+      toast({ title: "Error", description: "User already has this role", variant: "destructive" });
+      return;
+    }
+
+    const { error } = await supabase.from("user_roles").insert({
+      user_id: roleForm.user_id,
+      role: roleForm.role as "admin" | "employee" | "candidate",
+    });
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to assign role", variant: "destructive" });
+    } else {
+      toast({ title: "Success", description: "Role assigned successfully" });
+      setShowRoleForm(false);
+      setRoleForm({ user_id: "", role: "" });
+      fetchAllData();
+    }
+  };
+
+  const handleUpdateUserRole = async (roleId: string, newRole: string) => {
+    const { error } = await supabase
+      .from("user_roles")
+      .update({ role: newRole as "admin" | "employee" | "candidate" })
+      .eq("id", roleId);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to update role", variant: "destructive" });
+    } else {
+      setUserRoles(userRoles.map((r) => (r.id === roleId ? { ...r, role: newRole } : r)));
+      toast({ title: "Updated", description: "Role updated successfully" });
+    }
+  };
+
+  const handleDeleteUserRole = async (roleId: string) => {
+    const { error } = await supabase.from("user_roles").delete().eq("id", roleId);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to remove role", variant: "destructive" });
+    } else {
+      setUserRoles(userRoles.filter((r) => r.id !== roleId));
+      toast({ title: "Removed", description: "Role removed from user" });
     }
   };
 
@@ -1255,48 +1318,142 @@ const AdminDashboard = () => {
             {/* Users */}
             <TabsContent value="users">
               <Card>
-                <CardHeader>
-                  <CardTitle>User Roles</CardTitle>
-                  <CardDescription>View all users and their roles</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>User Roles</CardTitle>
+                    <CardDescription>Manage user roles and permissions</CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => setShowRoleForm(!showRoleForm)}
+                    className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Assign Role
+                  </Button>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-6">
+                  {showRoleForm && (
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
+                      <h3 className="font-semibold">Assign Role to User</h3>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Select User (by Email)</Label>
+                          <Select
+                            value={roleForm.user_id}
+                            onValueChange={(v) => setRoleForm({ ...roleForm, user_id: v })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a user" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {profiles.map((p) => (
+                                <SelectItem key={p.user_id} value={p.user_id}>
+                                  {p.email} {p.full_name ? `(${p.full_name})` : ""}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Role</Label>
+                          <Select
+                            value={roleForm.role}
+                            onValueChange={(v) => setRoleForm({ ...roleForm, role: v })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="employee">Employee</SelectItem>
+                              <SelectItem value="candidate">Candidate</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleAssignRole} className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                          Assign Role
+                        </Button>
+                        <Button variant="outline" onClick={() => setShowRoleForm(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>User</TableHead>
+                        <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
                         <TableHead>Assigned On</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {userRoles.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                             No users yet
                           </TableCell>
                         </TableRow>
                       ) : (
-                        userRoles.map((role) => (
-                          <TableRow key={role.id}>
-                            <TableCell className="font-medium">{getProfileName(role.user_id)}</TableCell>
-                            <TableCell>
-                              <span
-                                className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                                  role.role === "admin"
-                                    ? "bg-primary/20 text-primary"
-                                    : role.role === "employee"
-                                    ? "bg-blue-500/20 text-blue-500"
-                                    : "bg-lime/20 text-lime"
-                                }`}
-                              >
-                                {role.role}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {formatDate(role.created_at)}
-                            </TableCell>
-                          </TableRow>
-                        ))
+                        userRoles.map((role) => {
+                          const userProfile = profiles.find((p) => p.user_id === role.user_id);
+                          return (
+                            <TableRow key={role.id}>
+                              <TableCell className="font-medium">
+                                {userProfile?.full_name || "—"}
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {userProfile?.email || role.user_id.slice(0, 8)}
+                              </TableCell>
+                              <TableCell>
+                                <Select
+                                  value={role.role}
+                                  onValueChange={(v) => handleUpdateUserRole(role.id, v)}
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="employee">Employee</SelectItem>
+                                    <SelectItem value="candidate">Candidate</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                {formatDate(role.created_at)}
+                              </TableCell>
+                              <TableCell>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Remove Role</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to remove this user's role? They will lose access to their portal.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteUserRole(role.id)}>
+                                        Remove
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
