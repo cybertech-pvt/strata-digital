@@ -59,7 +59,7 @@ export const Header = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block text-secondary-foreground">
             <Button asChild className="gradient-cta text-white font-semibold hover:opacity-90 shadow-glow">
               <Link to="/contact">Get a Quote</Link>
             </Button>
