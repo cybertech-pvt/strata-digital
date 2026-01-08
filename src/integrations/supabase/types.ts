@@ -71,6 +71,56 @@ export type Database = {
         }
         Relationships: []
       }
+      interviews: {
+        Row: {
+          application_id: string | null
+          candidate_id: string
+          created_at: string
+          id: string
+          interview_date: string
+          interview_type: string
+          location: string | null
+          notes: string | null
+          scheduled_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          application_id?: string | null
+          candidate_id: string
+          created_at?: string
+          id?: string
+          interview_date: string
+          interview_type?: string
+          location?: string | null
+          notes?: string | null
+          scheduled_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string | null
+          candidate_id?: string
+          created_at?: string
+          id?: string
+          interview_date?: string
+          interview_type?: string
+          location?: string | null
+          notes?: string | null
+          scheduled_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "job_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_applications: {
         Row: {
           cover_letter: string
