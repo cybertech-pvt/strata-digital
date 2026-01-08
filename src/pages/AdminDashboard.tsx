@@ -61,6 +61,9 @@ import {
   Edit,
   Megaphone,
   UserCog,
+  CalendarPlus,
+  Video,
+  Building,
 } from "lucide-react";
 
 interface ContactSubmission {
@@ -91,6 +94,7 @@ interface JobApplication {
   cover_letter: string;
   status: string;
   created_at: string;
+  user_id: string | null;
 }
 
 interface JobPost {
@@ -125,6 +129,19 @@ interface Announcement {
   created_at: string;
 }
 
+interface Interview {
+  id: string;
+  application_id: string | null;
+  candidate_id: string;
+  scheduled_by: string | null;
+  interview_date: string;
+  interview_type: string;
+  location: string | null;
+  notes: string | null;
+  status: string;
+  created_at: string;
+}
+
 interface UserRole {
   id: string;
   user_id: string;
@@ -151,6 +168,7 @@ const AdminDashboard = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   // Form states
@@ -159,6 +177,8 @@ const AdminDashboard = () => {
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const [showRoleForm, setShowRoleForm] = useState(false);
+  const [showInterviewForm, setShowInterviewForm] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
   const [jobForm, setJobForm] = useState({
     title: "",
@@ -180,6 +200,13 @@ const AdminDashboard = () => {
   const [roleForm, setRoleForm] = useState({
     user_id: "",
     role: "",
+  });
+
+  const [interviewForm, setInterviewForm] = useState({
+    interview_date: "",
+    interview_type: "video",
+    location: "",
+    notes: "",
   });
 
   useEffect(() => {
@@ -206,6 +233,7 @@ const AdminDashboard = () => {
         announcementsRes,
         rolesRes,
         profilesRes,
+        interviewsRes,
       ] = await Promise.all([
         supabase.from("contact_submissions").select("*").order("created_at", { ascending: false }),
         supabase.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false }),
@@ -215,6 +243,7 @@ const AdminDashboard = () => {
         supabase.from("announcements").select("*").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("*").order("created_at", { ascending: false }),
         supabase.from("profiles").select("user_id, email, full_name"),
+        supabase.from("interviews").select("*").order("interview_date", { ascending: false }),
       ]);
 
       if (contactsRes.data) setContacts(contactsRes.data);
@@ -225,6 +254,7 @@ const AdminDashboard = () => {
       if (announcementsRes.data) setAnnouncements(announcementsRes.data);
       if (rolesRes.data) setUserRoles(rolesRes.data);
       if (profilesRes.data) setProfiles(profilesRes.data);
+      if (interviewsRes.data) setInterviews(interviewsRes.data);
     } catch (error) {
       toast({
         title: "Error",
@@ -283,12 +313,81 @@ const AdminDashboard = () => {
   };
 
   const handleUpdateApplicationStatus = async (id: string, status: string) => {
+    const application = applications.find((a) => a.id === id);
+    
     const { error } = await supabase.from("job_applications").update({ status }).eq("id", id);
     if (error) {
       toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
     } else {
       setApplications(applications.map((a) => (a.id === id ? { ...a, status } : a)));
       toast({ title: "Updated", description: `Application marked as ${status}` });
+
+      // Send email notification
+      if (application) {
+        try {
+          const response = await supabase.functions.invoke("send-application-notification", {
+            body: {
+              application_id: id,
+              new_status: status,
+              candidate_email: application.email,
+              candidate_name: application.name,
+              position: application.position,
+            },
+          });
+          
+          if (response.error) {
+            console.error("Failed to send notification email:", response.error);
+          } else {
+            toast({ title: "Email Sent", description: "Candidate has been notified" });
+          }
+        } catch (err) {
+          console.error("Email notification error:", err);
+        }
+      }
+    }
+  };
+
+  // Interview scheduling
+  const handleScheduleInterview = async () => {
+    if (!selectedApplication || !interviewForm.interview_date) {
+      toast({ title: "Error", description: "Please select a date and time", variant: "destructive" });
+      return;
+    }
+
+    const { error } = await supabase.from("interviews").insert({
+      application_id: selectedApplication.id,
+      candidate_id: selectedApplication.user_id,
+      scheduled_by: user?.id,
+      interview_date: interviewForm.interview_date,
+      interview_type: interviewForm.interview_type,
+      location: interviewForm.location || null,
+      notes: interviewForm.notes || null,
+      status: "scheduled",
+    });
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to schedule interview", variant: "destructive" });
+    } else {
+      toast({ title: "Scheduled", description: "Interview has been scheduled" });
+      setShowInterviewForm(false);
+      setSelectedApplication(null);
+      setInterviewForm({ interview_date: "", interview_type: "video", location: "", notes: "" });
+      fetchAllData();
+
+      // Send email notification for interview
+      try {
+        await supabase.functions.invoke("send-application-notification", {
+          body: {
+            application_id: selectedApplication.id,
+            new_status: "interview_scheduled",
+            candidate_email: selectedApplication.email,
+            candidate_name: selectedApplication.name,
+            position: selectedApplication.position,
+          },
+        });
+      } catch (err) {
+        console.error("Interview notification error:", err);
+      }
     }
   };
 
@@ -643,6 +742,10 @@ const AdminDashboard = () => {
                 <Calendar className="w-4 h-4" />
                 Leave Requests
               </TabsTrigger>
+              <TabsTrigger value="interviews" className="gap-2">
+                <CalendarPlus className="w-4 h-4" />
+                Interviews
+              </TabsTrigger>
               <TabsTrigger value="users" className="gap-2">
                 <UserCog className="w-4 h-4" />
                 Users
@@ -877,27 +980,40 @@ const AdminDashboard = () => {
                               {formatDate(app.created_at)}
                             </TableCell>
                             <TableCell>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Application</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this application? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDeleteApplication(app.id)}>
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    setSelectedApplication(app);
+                                    setShowInterviewForm(true);
+                                  }}
+                                  title="Schedule Interview"
+                                >
+                                  <CalendarPlus className="w-4 h-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Application</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete this application? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteApplication(app.id)}>
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))
@@ -1305,6 +1421,144 @@ const AdminDashboard = () => {
                                   </Button>
                                 </div>
                               )}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Interviews */}
+            <TabsContent value="interviews">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Scheduled Interviews</CardTitle>
+                  <CardDescription>Manage interview schedules with candidates</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {showInterviewForm && selectedApplication && (
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4 mb-6">
+                      <h3 className="font-semibold">
+                        Schedule Interview for {selectedApplication.name} - {selectedApplication.position}
+                      </h3>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Date & Time</Label>
+                          <Input
+                            type="datetime-local"
+                            value={interviewForm.interview_date}
+                            onChange={(e) => setInterviewForm({ ...interviewForm, interview_date: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Interview Type</Label>
+                          <Select
+                            value={interviewForm.interview_type}
+                            onValueChange={(v) => setInterviewForm({ ...interviewForm, interview_type: v })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="video">Video Call</SelectItem>
+                              <SelectItem value="phone">Phone Call</SelectItem>
+                              <SelectItem value="in-person">In-Person</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Location / Meeting Link</Label>
+                        <Input
+                          value={interviewForm.location}
+                          onChange={(e) => setInterviewForm({ ...interviewForm, location: e.target.value })}
+                          placeholder="e.g., Zoom link or office address"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Notes</Label>
+                        <Textarea
+                          value={interviewForm.notes}
+                          onChange={(e) => setInterviewForm({ ...interviewForm, notes: e.target.value })}
+                          placeholder="Additional notes for the candidate..."
+                          rows={2}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleScheduleInterview} className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                          Schedule Interview
+                        </Button>
+                        <Button variant="outline" onClick={() => { setShowInterviewForm(false); setSelectedApplication(null); }}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Candidate</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Date & Time</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Notes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {interviews.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                            No interviews scheduled yet. Click the calendar icon on an application to schedule one.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        interviews.map((interview) => (
+                          <TableRow key={interview.id}>
+                            <TableCell className="font-medium">
+                              {getProfileName(interview.candidate_id)}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {interview.interview_type === "video" ? (
+                                  <Video className="w-4 h-4 text-primary" />
+                                ) : (
+                                  <Building className="w-4 h-4 text-primary" />
+                                )}
+                                <span className="capitalize">{interview.interview_type}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(interview.interview_date).toLocaleString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate">
+                              {interview.location || "-"}
+                            </TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                                interview.status === "scheduled"
+                                  ? "bg-blue-500/20 text-blue-500"
+                                  : interview.status === "completed"
+                                  ? "bg-lime/20 text-lime"
+                                  : interview.status === "cancelled"
+                                  ? "bg-destructive/20 text-destructive"
+                                  : "bg-muted text-muted-foreground"
+                              }`}>
+                                {interview.status}
+                              </span>
+                            </TableCell>
+                            <TableCell className="max-w-xs truncate text-muted-foreground">
+                              {interview.notes || "-"}
                             </TableCell>
                           </TableRow>
                         ))

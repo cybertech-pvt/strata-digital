@@ -28,6 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { AvatarUpload } from "@/components/AvatarUpload";
 import {
   Briefcase,
   User,
@@ -35,6 +36,9 @@ import {
   LogOut,
   RefreshCw,
   MapPin,
+  CalendarClock,
+  Video,
+  Building,
   Clock,
   Send,
   Upload,
@@ -53,6 +57,16 @@ interface Profile {
   current_company: string | null;
   bio: string | null;
   resume_url: string | null;
+  avatar_url: string | null;
+}
+
+interface Interview {
+  id: string;
+  interview_date: string;
+  interview_type: string;
+  location: string | null;
+  notes: string | null;
+  status: string;
 }
 
 interface JobPost {
@@ -79,6 +93,7 @@ const CandidateDashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [interviews, setInterviews] = useState<Interview[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [applying, setApplying] = useState<string | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
@@ -115,15 +130,17 @@ const CandidateDashboard = () => {
   };
 
   const fetchData = async (uid: string) => {
-    const [profileRes, jobsRes, appsRes] = await Promise.all([
+    const [profileRes, jobsRes, appsRes, interviewsRes] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", uid).maybeSingle(),
       supabase.from("job_posts").select("*").eq("is_active", true).order("created_at", { ascending: false }),
       supabase.from("job_applications").select("id, position, status, created_at").eq("user_id", uid).order("created_at", { ascending: false }),
+      supabase.from("interviews").select("*").eq("candidate_id", uid).order("interview_date", { ascending: true }),
     ]);
 
     if (profileRes.data) setProfile(profileRes.data);
     if (jobsRes.data) setJobPosts(jobsRes.data);
     if (appsRes.data) setApplications(appsRes.data);
+    if (interviewsRes.data) setInterviews(interviewsRes.data);
   };
 
   const handleSignOut = async () => {
@@ -323,11 +340,22 @@ const CandidateDashboard = () => {
       <section className="pt-32 pb-20 min-h-screen bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Candidate Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome back, {profile?.full_name || profile?.email}
-              </p>
+            <div className="flex items-center gap-4">
+              {userId && profile && (
+                <AvatarUpload
+                  userId={userId}
+                  currentAvatarUrl={profile.avatar_url}
+                  onAvatarUpdate={(url) => setProfile(prev => prev ? { ...prev, avatar_url: url } : null)}
+                  userName={profile.full_name || ""}
+                  size="lg"
+                />
+              )}
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Candidate Dashboard</h1>
+                <p className="text-muted-foreground">
+                  Welcome back, {profile?.full_name || profile?.email}
+                </p>
+              </div>
             </div>
             <Button
               onClick={handleSignOut}
@@ -348,6 +376,10 @@ const CandidateDashboard = () => {
               <TabsTrigger value="applications" className="gap-2">
                 <FileText className="w-4 h-4" />
                 My Applications
+              </TabsTrigger>
+              <TabsTrigger value="interviews" className="gap-2">
+                <CalendarClock className="w-4 h-4" />
+                Interviews
               </TabsTrigger>
               <TabsTrigger value="profile" className="gap-2">
                 <User className="w-4 h-4" />
@@ -464,6 +496,76 @@ const CandidateDashboard = () => {
                       )}
                     </TableBody>
                   </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="interviews">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Scheduled Interviews</CardTitle>
+                  <CardDescription>Your upcoming and past interviews</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {interviews.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No interviews scheduled yet
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {interviews.map((interview) => (
+                        <div
+                          key={interview.id}
+                          className="flex items-start gap-4 p-4 bg-secondary/50 rounded-lg"
+                        >
+                          <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center shrink-0">
+                            {interview.interview_type === "video" ? (
+                              <Video className="w-6 h-6 text-primary" />
+                            ) : (
+                              <Building className="w-6 h-6 text-primary" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium text-foreground capitalize">
+                                {interview.interview_type} Interview
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${
+                                interview.status === "scheduled"
+                                  ? "bg-blue-500/20 text-blue-500"
+                                  : interview.status === "completed"
+                                  ? "bg-lime/20 text-lime"
+                                  : "bg-muted text-muted-foreground"
+                              }`}>
+                                {interview.status}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {new Date(interview.interview_date).toLocaleString("en-US", {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </p>
+                            {interview.location && (
+                              <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                                <MapPin className="w-3 h-3" />
+                                {interview.location}
+                              </p>
+                            )}
+                            {interview.notes && (
+                              <p className="text-sm text-muted-foreground mt-2 italic">
+                                "{interview.notes}"
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
