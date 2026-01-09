@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 import { 
   Mail, 
   Phone, 
@@ -18,6 +19,27 @@ import {
 } from "lucide-react";
 import googleQr from "@/assets/google-qr.png";
 import followQr from "@/assets/follow-qr.png";
+
+// Validation schema for contact form
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters"),
+  email: z.string()
+    .trim()
+    .email("Please enter a valid email address")
+    .max(255, "Email must be less than 255 characters"),
+  company: z.string()
+    .trim()
+    .max(100, "Company name must be less than 100 characters")
+    .optional()
+    .or(z.literal("")),
+  message: z.string()
+    .trim()
+    .min(10, "Message must be at least 10 characters")
+    .max(2000, "Message must be less than 2000 characters"),
+});
 
 const contactInfo = [
   {
@@ -72,9 +94,18 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
+      // Validate form data with Zod before submission
+      const validatedData = contactSchema.parse(formData);
+      
+      // Transform empty company string to null for database
+      const dataToInsert = {
+        ...validatedData,
+        company: validatedData.company || null,
+      };
+
       const { error } = await supabase
         .from("contact_submissions")
-        .insert([formData]);
+        .insert([dataToInsert]);
 
       if (error) throw error;
 
@@ -85,11 +116,20 @@ const Contact = () => {
 
       setFormData({ name: "", email: "", company: "", message: "" });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again later.",
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        // Show first validation error
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again later.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
