@@ -215,6 +215,33 @@ const AdminDashboard = () => {
     }
   }, [user, loading, navigate]);
 
+  // Server-side role verification on page load
+  useEffect(() => {
+    const verifyAdminAccess = async () => {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+      
+      if (!data) {
+        toast({
+          title: "Access Denied",
+          description: "You do not have admin privileges.",
+          variant: "destructive",
+        });
+        navigate('/');
+      }
+    };
+    
+    if (user && !loading) {
+      verifyAdminAccess();
+    }
+  }, [user, loading, navigate, toast]);
+
   useEffect(() => {
     if (user && isAdmin) {
       fetchAllData();
