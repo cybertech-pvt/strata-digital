@@ -20,9 +20,9 @@ import {
 const contactInfo = [
   {
     icon: Mail,
-    title: "Email Us",
-    details: "support@cybervibeglobal.com",
-    subtext: "We'll respond within 24 hours",
+    title: "General Enquiries",
+    details: "info@cybervibeglobal.com",
+    subtext: "For business & general inquiries",
   },
   {
     icon: Phone,

@@ -46,6 +46,7 @@ import {
   Phone,
   Linkedin,
 } from "lucide-react";
+import { AvatarUpload } from "@/components/AvatarUpload";
 
 interface Announcement {
   id: string;
@@ -76,6 +77,11 @@ interface JobApplication {
   created_at: string;
 }
 
+interface Profile {
+  full_name: string | null;
+  avatar_url: string | null;
+}
+
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -83,6 +89,7 @@ const EmployeeDashboard = () => {
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [showLeaveForm, setShowLeaveForm] = useState(false);
   const [leaveForm, setLeaveForm] = useState({
     leave_type: "",
@@ -117,7 +124,18 @@ const EmployeeDashboard = () => {
 
     setUserId(session.user.id);
     await fetchData(session.user.id);
+    await fetchProfile(session.user.id);
     setLoading(false);
+  };
+
+  const fetchProfile = async (uid: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("user_id", uid)
+      .maybeSingle();
+    
+    if (data) setProfile(data);
   };
 
   const fetchData = async (uid: string) => {
@@ -213,9 +231,20 @@ const EmployeeDashboard = () => {
       <section className="pt-32 pb-20 min-h-screen bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Employee Dashboard</h1>
-              <p className="text-muted-foreground">Welcome to your employee portal</p>
+            <div className="flex items-center gap-4">
+              {userId && (
+                <AvatarUpload
+                  userId={userId}
+                  currentAvatarUrl={profile?.avatar_url || null}
+                  onAvatarUpdate={(url) => setProfile((prev) => prev ? { ...prev, avatar_url: url } : { full_name: null, avatar_url: url })}
+                  userName={profile?.full_name || ""}
+                  size="md"
+                />
+              )}
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Employee Dashboard</h1>
+                <p className="text-muted-foreground">Welcome{profile?.full_name ? `, ${profile.full_name}` : " to your employee portal"}</p>
+              </div>
             </div>
             <Button
               onClick={handleSignOut}

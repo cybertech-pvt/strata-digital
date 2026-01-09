@@ -347,6 +347,8 @@ const AdminDashboard = () => {
     }
   };
 
+  const [editingInterview, setEditingInterview] = useState<Interview | null>(null);
+
   // Interview scheduling
   const handleScheduleInterview = async () => {
     if (!selectedApplication || !interviewForm.interview_date) {
@@ -388,6 +390,57 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error("Interview notification error:", err);
       }
+    }
+  };
+
+  const handleUpdateInterviewStatus = async (id: string, status: string) => {
+    const { error } = await supabase
+      .from("interviews")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to update interview status", variant: "destructive" });
+    } else {
+      setInterviews(interviews.map((i) => (i.id === id ? { ...i, status } : i)));
+      toast({ title: "Updated", description: `Interview marked as ${status}` });
+    }
+  };
+
+  const handleRescheduleInterview = (interview: Interview) => {
+    setEditingInterview(interview);
+    setInterviewForm({
+      interview_date: interview.interview_date.slice(0, 16),
+      interview_type: interview.interview_type,
+      location: interview.location || "",
+      notes: interview.notes || "",
+    });
+  };
+
+  const handleSaveReschedule = async () => {
+    if (!editingInterview || !interviewForm.interview_date) {
+      toast({ title: "Error", description: "Please select a date and time", variant: "destructive" });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("interviews")
+      .update({
+        interview_date: interviewForm.interview_date,
+        interview_type: interviewForm.interview_type,
+        location: interviewForm.location || null,
+        notes: interviewForm.notes || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingInterview.id);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to reschedule interview", variant: "destructive" });
+    } else {
+      toast({ title: "Rescheduled", description: "Interview has been rescheduled" });
+      setEditingInterview(null);
+      setInterviewForm({ interview_date: "", interview_type: "video", location: "", notes: "" });
+      fetchAllData();
     }
   };
 
@@ -1439,6 +1492,65 @@ const AdminDashboard = () => {
                   <CardDescription>Manage interview schedules with candidates</CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {editingInterview && (
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4 mb-6">
+                      <h3 className="font-semibold">
+                        Reschedule Interview - {getProfileName(editingInterview.candidate_id)}
+                      </h3>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Date & Time</Label>
+                          <Input
+                            type="datetime-local"
+                            value={interviewForm.interview_date}
+                            onChange={(e) => setInterviewForm({ ...interviewForm, interview_date: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Interview Type</Label>
+                          <Select
+                            value={interviewForm.interview_type}
+                            onValueChange={(v) => setInterviewForm({ ...interviewForm, interview_type: v })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="video">Video Call</SelectItem>
+                              <SelectItem value="phone">Phone Call</SelectItem>
+                              <SelectItem value="in-person">In-Person</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Location / Meeting Link</Label>
+                        <Input
+                          value={interviewForm.location}
+                          onChange={(e) => setInterviewForm({ ...interviewForm, location: e.target.value })}
+                          placeholder="e.g., Zoom link or office address"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Notes</Label>
+                        <Textarea
+                          value={interviewForm.notes}
+                          onChange={(e) => setInterviewForm({ ...interviewForm, notes: e.target.value })}
+                          placeholder="Additional notes..."
+                          rows={2}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleSaveReschedule} className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
+                          Save Changes
+                        </Button>
+                        <Button variant="outline" onClick={() => { setEditingInterview(null); setInterviewForm({ interview_date: "", interview_type: "video", location: "", notes: "" }); }}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   {showInterviewForm && selectedApplication && (
                     <div className="p-4 bg-secondary/50 rounded-lg space-y-4 mb-6">
                       <h3 className="font-semibold">
@@ -1507,12 +1619,13 @@ const AdminDashboard = () => {
                         <TableHead>Location</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Notes</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {interviews.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                             No interviews scheduled yet. Click the calendar icon on an application to schedule one.
                           </TableCell>
                         </TableRow>
@@ -1559,6 +1672,35 @@ const AdminDashboard = () => {
                             </TableCell>
                             <TableCell className="max-w-xs truncate text-muted-foreground">
                               {interview.notes || "-"}
+                            </TableCell>
+                            <TableCell>
+                              {interview.status === "scheduled" && (
+                                <div className="flex gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-lime border-lime hover:bg-lime/10"
+                                    onClick={() => handleUpdateInterviewStatus(interview.id, "completed")}
+                                  >
+                                    Complete
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-destructive border-destructive hover:bg-destructive/10"
+                                    onClick={() => handleUpdateInterviewStatus(interview.id, "cancelled")}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleRescheduleInterview(interview)}
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))
