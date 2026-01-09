@@ -16,6 +16,8 @@ import {
   Twitter,
   Facebook
 } from "lucide-react";
+import googleQr from "@/assets/google-qr.png";
+import followQr from "@/assets/follow-qr.png";
 
 const contactInfo = [
   {
@@ -220,6 +222,27 @@ const Contact = () => {
                     <span className="text-xs text-lime">{office.type}</span>
                   </div>
                 ))}
+              </div>
+
+              {/* QR Codes */}
+              <h3 className="text-xl font-bold text-foreground mb-4">Scan to Connect</h3>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <div className="bg-card p-3 rounded-xl border border-border hover:border-teal/30 transition-colors">
+                  <img 
+                    src={googleQr} 
+                    alt="Google Business QR Code" 
+                    className="w-28 h-28 object-contain"
+                  />
+                  <p className="text-xs text-center text-muted-foreground mt-2">Google Business</p>
+                </div>
+                <div className="bg-card p-3 rounded-xl border border-border hover:border-teal/30 transition-colors">
+                  <img 
+                    src={followQr} 
+                    alt="Follow Us QR Code" 
+                    className="w-28 h-28 object-contain"
+                  />
+                  <p className="text-xs text-center text-muted-foreground mt-2">Follow Us</p>
+                </div>
               </div>
 
               {/* Social Links */}
