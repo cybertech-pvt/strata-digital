@@ -510,6 +510,12 @@ const Careers = () => {
             Join our team of innovators and help shape the future of technology. 
             Your next great opportunity starts here.
           </p>
+          <p className="text-white/60 text-sm mb-6">
+            For career inquiries, contact us at{" "}
+            <a href="mailto:careers@cybervibeglobal.com" className="text-lime hover:underline">
+              careers@cybervibeglobal.com
+            </a>
+          </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90">
               <a href="#positions">
