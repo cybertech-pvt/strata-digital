@@ -97,9 +97,11 @@ const Contact = () => {
       // Validate form data with Zod before submission
       const validatedData = contactSchema.parse(formData);
       
-      // Transform empty company string to null for database
+      // Transform for database insert with proper typing
       const dataToInsert = {
-        ...validatedData,
+        name: validatedData.name,
+        email: validatedData.email,
+        message: validatedData.message,
         company: validatedData.company || null,
       };
 
