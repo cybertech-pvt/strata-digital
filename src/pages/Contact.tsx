@@ -97,6 +97,24 @@ const Contact = () => {
       // Validate form data with Zod before submission
       const validatedData = contactSchema.parse(formData);
       
+      // Check rate limit before submission
+      const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('rate-limit', {
+        body: { formType: 'contact', email: validatedData.email }
+      });
+
+      if (rateLimitError) {
+        console.error('Rate limit check failed:', rateLimitError);
+        // Continue with submission if rate limit check fails (fail-open for UX)
+      } else if (rateLimitData && !rateLimitData.allowed) {
+        toast({
+          title: "Too Many Requests",
+          description: rateLimitData.error || "Please wait before submitting again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Transform for database insert with proper typing
       const dataToInsert = {
         name: validatedData.name,
