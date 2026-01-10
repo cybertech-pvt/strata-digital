@@ -148,6 +148,20 @@ const Careers = () => {
         cover_letter: formData.cover_letter,
       });
 
+      // Check rate limit before submission
+      const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('rate-limit', {
+        body: { formType: 'job_application', email: validatedData.email }
+      });
+
+      if (rateLimitError) {
+        console.error('Rate limit check failed:', rateLimitError);
+        // Continue with submission if rate limit check fails (fail-open for UX)
+      } else if (rateLimitData && !rateLimitData.allowed) {
+        toast.error(rateLimitData.error || "Too many applications. Please wait before submitting again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase.from("job_applications").insert({
         position: validatedData.position,
         name: validatedData.name,

@@ -34,9 +34,29 @@ export const NewsletterSection = () => {
     setIsLoading(true);
 
     try {
+      const trimmedEmail = email.trim().toLowerCase();
+      
+      // Check rate limit before submission
+      const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('rate-limit', {
+        body: { formType: 'newsletter', email: trimmedEmail }
+      });
+
+      if (rateLimitError) {
+        console.error('Rate limit check failed:', rateLimitError);
+        // Continue with submission if rate limit check fails (fail-open for UX)
+      } else if (rateLimitData && !rateLimitData.allowed) {
+        toast({
+          variant: "destructive",
+          title: "Too Many Requests",
+          description: rateLimitData.error || "Please wait before subscribing again.",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const { error } = await supabase
         .from("newsletter_subscribers")
-        .insert({ email: email.trim().toLowerCase() });
+        .insert({ email: trimmedEmail });
 
       if (error) {
         if (error.code === "23505") {
