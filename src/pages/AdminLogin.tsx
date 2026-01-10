@@ -14,9 +14,8 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<"login" | "signup">("login");
   
-  const { signIn, signUp } = useAuth();
+  const { signIn } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -25,36 +24,19 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      if (mode === "login") {
-        const { error } = await signIn(email, password);
-        if (error) {
-          toast({
-            title: "Login Failed",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Welcome Back",
-            description: "You have been successfully logged in.",
-          });
-          navigate("/admin");
-        }
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        const { error } = await signUp(email, password);
-        if (error) {
-          toast({
-            title: "Signup Failed",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Account Created",
-            description: "Your account has been created. You can now log in.",
-          });
-          setMode("login");
-        }
+        toast({
+          title: "Welcome Back",
+          description: "You have been successfully logged in.",
+        });
+        navigate("/admin");
       }
     } catch (error) {
       toast({
@@ -79,13 +61,9 @@ const AdminLogin = () => {
                   alt="CYBERVIBE"
                   className="h-12 mx-auto mb-4"
                 />
-                <h1 className="text-2xl font-bold text-white">
-                  {mode === "login" ? "Admin Login" : "Create Account"}
-                </h1>
+                <h1 className="text-2xl font-bold text-white">Admin Login</h1>
                 <p className="text-white/60 mt-2">
-                  {mode === "login"
-                    ? "Sign in to access the admin dashboard"
-                    : "Create a new admin account"}
+                  Sign in to access the admin dashboard
                 </p>
               </div>
 
@@ -143,25 +121,9 @@ const AdminLogin = () => {
                   className="w-full gradient-cta text-white hover:opacity-90"
                   disabled={isLoading}
                 >
-                  {isLoading
-                    ? "Please wait..."
-                    : mode === "login"
-                    ? "Sign In"
-                    : "Create Account"}
+                  {isLoading ? "Please wait..." : "Sign In"}
                 </Button>
               </form>
-
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
-                  className="text-teal hover:text-lime transition-colors text-sm"
-                >
-                  {mode === "login"
-                    ? "Don't have an account? Sign up"
-                    : "Already have an account? Sign in"}
-                </button>
-              </div>
             </div>
           </div>
         </div>
