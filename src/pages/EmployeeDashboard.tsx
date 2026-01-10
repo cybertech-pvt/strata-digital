@@ -38,13 +38,9 @@ import {
 import {
   Megaphone,
   Calendar,
-  Briefcase,
   LogOut,
   RefreshCw,
   Plus,
-  Mail,
-  Phone,
-  Linkedin,
 } from "lucide-react";
 import { AvatarUpload } from "@/components/AvatarUpload";
 
@@ -65,17 +61,7 @@ interface LeaveRequest {
   created_at: string;
 }
 
-interface JobApplication {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  position: string;
-  experience_years: number;
-  linkedin_url: string | null;
-  status: string;
-  created_at: string;
-}
+// Job applications removed from employee dashboard for security - only admins have access
 
 interface Profile {
   full_name: string | null;
@@ -87,7 +73,6 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
-  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [showLeaveForm, setShowLeaveForm] = useState(false);
@@ -139,7 +124,7 @@ const EmployeeDashboard = () => {
   };
 
   const fetchData = async (uid: string) => {
-    const [announcementsRes, leaveRes, appsRes] = await Promise.all([
+    const [announcementsRes, leaveRes] = await Promise.all([
       supabase
         .from("announcements")
         .select("*")
@@ -150,15 +135,10 @@ const EmployeeDashboard = () => {
         .select("*")
         .eq("user_id", uid)
         .order("created_at", { ascending: false }),
-      supabase
-        .from("job_applications")
-        .select("*")
-        .order("created_at", { ascending: false }),
     ]);
 
     if (announcementsRes.data) setAnnouncements(announcementsRes.data);
     if (leaveRes.data) setLeaveRequests(leaveRes.data);
-    if (appsRes.data) setApplications(appsRes.data);
   };
 
   const handleSignOut = async () => {
@@ -265,10 +245,6 @@ const EmployeeDashboard = () => {
               <TabsTrigger value="leave" className="gap-2">
                 <Calendar className="w-4 h-4" />
                 Leave Requests
-              </TabsTrigger>
-              <TabsTrigger value="applications" className="gap-2">
-                <Briefcase className="w-4 h-4" />
-                Job Applications
               </TabsTrigger>
             </TabsList>
 
@@ -421,71 +397,6 @@ const EmployeeDashboard = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="applications">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Job Applications</CardTitle>
-                  <CardDescription>View and review candidate applications</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Applicant</TableHead>
-                        <TableHead>Position</TableHead>
-                        <TableHead>Experience</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {applications.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                            No job applications yet
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        applications.map((app) => (
-                          <TableRow key={app.id}>
-                            <TableCell className="font-medium">{app.name}</TableCell>
-                            <TableCell className="text-primary">{app.position}</TableCell>
-                            <TableCell>{app.experience_years} years</TableCell>
-                            <TableCell>
-                              <div className="flex flex-col gap-1 text-sm">
-                                <a href={`mailto:${app.email}`} className="text-primary hover:underline flex items-center gap-1">
-                                  <Mail className="w-3 h-3" />
-                                  {app.email}
-                                </a>
-                                <span className="flex items-center gap-1 text-muted-foreground">
-                                  <Phone className="w-3 h-3" />
-                                  {app.phone}
-                                </span>
-                                {app.linkedin_url && (
-                                  <a href={app.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1">
-                                    <Linkedin className="w-3 h-3" />
-                                    LinkedIn
-                                  </a>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(app.status)}`}>
-                                {app.status}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {formatDate(app.created_at)}
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
           </Tabs>
         </div>
       </section>
