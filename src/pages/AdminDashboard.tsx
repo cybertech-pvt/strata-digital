@@ -64,6 +64,9 @@ import {
   CalendarPlus,
   Video,
   Building,
+  UserPlus,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 interface ContactSubmission {
@@ -179,6 +182,9 @@ const AdminDashboard = () => {
   const [showRoleForm, setShowRoleForm] = useState(false);
   const [showInterviewForm, setShowInterviewForm] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [showCreateAdminForm, setShowCreateAdminForm] = useState(false);
+  const [createAdminLoading, setCreateAdminLoading] = useState(false);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
 
   const [jobForm, setJobForm] = useState({
     title: "",
@@ -207,6 +213,12 @@ const AdminDashboard = () => {
     interview_type: "video",
     location: "",
     notes: "",
+  });
+
+  const [adminForm, setAdminForm] = useState({
+    email: "",
+    password: "",
+    full_name: "",
   });
 
   useEffect(() => {
@@ -656,6 +668,55 @@ const AdminDashboard = () => {
     } else {
       setUserRoles(userRoles.filter((r) => r.id !== roleId));
       toast({ title: "Removed", description: "Role removed from user" });
+    }
+  };
+
+  // Create new admin user
+  const handleCreateAdmin = async () => {
+    if (!adminForm.email || !adminForm.password) {
+      toast({ title: "Error", description: "Email and password are required", variant: "destructive" });
+      return;
+    }
+
+    if (adminForm.password.length < 6) {
+      toast({ title: "Error", description: "Password must be at least 6 characters", variant: "destructive" });
+      return;
+    }
+
+    setCreateAdminLoading(true);
+
+    try {
+      // Create the user account using Supabase Auth Admin API via Edge Function
+      const { data, error } = await supabase.functions.invoke("create-admin-user", {
+        body: {
+          email: adminForm.email,
+          password: adminForm.password,
+          full_name: adminForm.full_name || null,
+        },
+      });
+
+      if (error) {
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      if (data?.error) {
+        toast({ title: "Error", description: data.error, variant: "destructive" });
+        return;
+      }
+
+      toast({ 
+        title: "Admin Created", 
+        description: `New admin account created for ${adminForm.email}. They can now log in.` 
+      });
+      
+      setShowCreateAdminForm(false);
+      setAdminForm({ email: "", password: "", full_name: "" });
+      fetchAllData();
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to create admin user", variant: "destructive" });
+    } finally {
+      setCreateAdminLoading(false);
     }
   };
 
@@ -1741,20 +1802,103 @@ const AdminDashboard = () => {
             {/* Users */}
             <TabsContent value="users">
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
                   <div>
                     <CardTitle>User Roles</CardTitle>
                     <CardDescription>Manage user roles and permissions</CardDescription>
                   </div>
-                  <Button
-                    onClick={() => setShowRoleForm(!showRoleForm)}
-                    className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Assign Role
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        setShowCreateAdminForm(!showCreateAdminForm);
+                        setShowRoleForm(false);
+                      }}
+                      variant="outline"
+                      className="border-teal text-teal hover:bg-teal/10"
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Create Admin
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowRoleForm(!showRoleForm);
+                        setShowCreateAdminForm(false);
+                      }}
+                      className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Assign Role
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Create Admin Form */}
+                  {showCreateAdminForm && (
+                    <div className="p-4 bg-teal/10 border border-teal/30 rounded-lg space-y-4">
+                      <div className="flex items-center gap-2">
+                        <UserPlus className="w-5 h-5 text-teal" />
+                        <h3 className="font-semibold">Create New Admin Account</h3>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Create a new admin user account. They will be able to log in immediately with the credentials you set.
+                      </p>
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Email *</Label>
+                          <Input
+                            type="email"
+                            placeholder="admin@company.com"
+                            value={adminForm.email}
+                            onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Password *</Label>
+                          <div className="relative">
+                            <Input
+                              type={showAdminPassword ? "text" : "password"}
+                              placeholder="Min 6 characters"
+                              value={adminForm.password}
+                              onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                              className="pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowAdminPassword(!showAdminPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              {showAdminPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Full Name (Optional)</Label>
+                          <Input
+                            type="text"
+                            placeholder="John Doe"
+                            value={adminForm.full_name}
+                            onChange={(e) => setAdminForm({ ...adminForm, full_name: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleCreateAdmin} 
+                          disabled={createAdminLoading}
+                          className="bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
+                        >
+                          {createAdminLoading ? "Creating..." : "Create Admin Account"}
+                        </Button>
+                        <Button variant="outline" onClick={() => {
+                          setShowCreateAdminForm(false);
+                          setAdminForm({ email: "", password: "", full_name: "" });
+                        }}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   {showRoleForm && (
                     <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
                       <h3 className="font-semibold">Assign Role to User</h3>
