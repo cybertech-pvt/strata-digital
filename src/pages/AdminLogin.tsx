@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, Mail, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowLeft, Shield } from "lucide-react";
 import logoDark from "@/assets/logo-dark.png";
 
 type Mode = "login" | "forgot-password" | "reset-sent";
@@ -19,9 +18,29 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
   
-  const { signIn } = useAuth();
+  const { signIn, user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Redirect already authenticated admins
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (loading) return;
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (data) {
+        navigate("/secure-admin/dashboard", { replace: true });
+      }
+    };
+    checkAdminRole();
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,11 +55,31 @@ const AdminLogin = () => {
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Welcome Back",
-          description: "You have been successfully logged in.",
-        });
-        navigate("/admin");
+        // Verify admin role before redirecting
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", authUser.id)
+            .eq("role", "admin")
+            .maybeSingle();
+
+          if (roleData) {
+            toast({
+              title: "Welcome Back",
+              description: "You have been successfully logged in.",
+            });
+            navigate("/secure-admin/dashboard");
+          } else {
+            await supabase.auth.signOut();
+            toast({
+              title: "Access Denied",
+              description: "You do not have admin privileges.",
+              variant: "destructive",
+            });
+          }
+        }
       }
     } catch (error) {
       toast({
@@ -69,7 +108,7 @@ const AdminLogin = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/admin/login`,
+        redirectTo: `${window.location.origin}/secure-admin/login`,
       });
 
       if (error) {
@@ -275,17 +314,19 @@ const AdminLogin = () => {
   );
 
   return (
-    <Layout>
-      <section className="pt-32 pb-20 min-h-screen bg-navy">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-md mx-auto">
-            {mode === "login" && renderLogin()}
-            {mode === "forgot-password" && renderForgotPassword()}
-            {mode === "reset-sent" && renderResetSent()}
+    <div className="min-h-screen bg-navy flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal/10 rounded-full border border-teal/20">
+            <Shield className="w-4 h-4 text-teal" />
+            <span className="text-teal text-xs font-medium">Secure Admin Portal</span>
           </div>
         </div>
-      </section>
-    </Layout>
+        {mode === "login" && renderLogin()}
+        {mode === "forgot-password" && renderForgotPassword()}
+        {mode === "reset-sent" && renderResetSent()}
+      </div>
+    </div>
   );
 };
 

@@ -223,7 +223,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/admin/login");
+      navigate("/secure-admin/login");
     }
   }, [user, loading, navigate]);
 
