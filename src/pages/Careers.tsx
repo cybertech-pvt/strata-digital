@@ -28,7 +28,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
 import { z } from "zod";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
 const applicationSchema = z.object({
   position: z.string().min(1, "Please select a position"),
@@ -126,14 +129,23 @@ const Careers = () => {
     linkedin_url: "",
     cover_letter: "",
   });
+  const { token: turnstileToken, isVerified, handleVerify, handleExpire, handleError, reset: resetTurnstile } = useTurnstile();
 
   const handleApply = (positionTitle: string) => {
     setSelectedPosition(positionTitle);
     setShowApplicationForm(true);
+    resetTurnstile(); // Reset CAPTCHA when opening form
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Verify CAPTCHA before submission
+    if (!isVerified || !turnstileToken) {
+      toast.error("Please complete the CAPTCHA verification.");
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -177,6 +189,7 @@ const Careers = () => {
 
       toast.success("Application submitted successfully! We'll be in touch soon.");
       setShowApplicationForm(false);
+      resetTurnstile();
       setFormData({
         name: "",
         email: "",
@@ -482,6 +495,16 @@ const Careers = () => {
                 <p className="text-xs text-muted-foreground">Minimum 50 characters</p>
               </div>
 
+              <div className="mt-4">
+                <Turnstile
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onVerify={handleVerify}
+                  onExpire={handleExpire}
+                  onError={handleError}
+                  theme="dark"
+                />
+              </div>
+
               <div className="flex gap-4 pt-4">
                 <Button 
                   type="button" 
@@ -494,7 +517,7 @@ const Careers = () => {
                 <Button 
                   type="submit" 
                   className="flex-1 bg-gradient-to-r from-teal to-lime text-navy hover:opacity-90"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isVerified}
                 >
                   {isSubmitting ? (
                     <>

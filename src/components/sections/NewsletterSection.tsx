@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 
 const emailSchema = z.string().email("Please enter a valid email address");
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
 export const NewsletterSection = () => {
   const [email, setEmail] = useState("");
@@ -16,9 +18,20 @@ export const NewsletterSection = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { toast } = useToast();
   const { ref, isVisible } = useScrollReveal({ threshold: 0.2 });
+  const { token: turnstileToken, isVerified, handleVerify, handleExpire, handleError, reset: resetTurnstile } = useTurnstile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Verify CAPTCHA before submission
+    if (!isVerified || !turnstileToken) {
+      toast({
+        variant: "destructive",
+        title: "Verification Required",
+        description: "Please complete the CAPTCHA verification.",
+      });
+      return;
+    }
 
     // Validate email
     const result = emailSchema.safeParse(email);
@@ -70,6 +83,7 @@ export const NewsletterSection = () => {
       } else {
         setIsSubscribed(true);
         setEmail("");
+        resetTurnstile();
         toast({
           title: "Subscribed!",
           description: "Thank you for subscribing to our newsletter.",
@@ -147,7 +161,7 @@ export const NewsletterSection = () => {
                 type="submit"
                 size="lg"
                 className="gradient-cta text-white hover:opacity-90 shadow-glow h-12 px-8"
-                disabled={isLoading}
+                disabled={isLoading || !isVerified}
               >
                 {isLoading ? (
                   <>
@@ -159,6 +173,25 @@ export const NewsletterSection = () => {
                 )}
               </Button>
             </form>
+          )}
+          
+          {!isSubscribed && (
+            <div
+              className={cn(
+                "flex justify-center mt-4 transition-all duration-700",
+                isVisible ? "opacity-100" : "opacity-0"
+              )}
+              style={{ transitionDelay: "300ms" }}
+            >
+              <Turnstile
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={handleVerify}
+                onExpire={handleExpire}
+                onError={handleError}
+                theme="dark"
+                size="compact"
+              />
+            </div>
           )}
 
           <p
