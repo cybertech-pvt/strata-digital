@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Eye, EyeOff, Building2 } from "lucide-react";
 import { z } from "zod";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "";
 
 const authSchema = z.object({
   email: z.string().trim().email("Please enter a valid email").max(255),
@@ -20,6 +23,7 @@ const EmployeeLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { token: captchaToken, isVerified: isCaptchaVerified, handleVerify, handleExpire, handleError, reset: resetCaptcha } = useTurnstile();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -42,6 +46,12 @@ const EmployeeLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isCaptchaVerified) {
+      toast.error("Please complete the CAPTCHA verification.");
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
@@ -65,10 +75,12 @@ const EmployeeLogin = () => {
       if (!roleData) {
         await supabase.auth.signOut();
         toast.error("You are not authorized as an employee. Please contact admin.");
+        resetCaptcha();
         return;
       }
 
       toast.success("Welcome back!");
+      resetCaptcha();
       navigate("/employee/dashboard");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -78,6 +90,7 @@ const EmployeeLogin = () => {
       } else {
         toast.error("An error occurred. Please try again.");
       }
+      resetCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -133,10 +146,20 @@ const EmployeeLogin = () => {
                   </div>
                 </div>
 
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onVerify={handleVerify}
+                    onExpire={handleExpire}
+                    onError={handleError}
+                    theme="auto"
+                  />
+                </div>
+
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-teal to-lime text-navy font-semibold hover:opacity-90"
-                  disabled={isLoading}
+                  disabled={isLoading || !isCaptchaVerified}
                 >
                   {isLoading ? "Please wait..." : "Sign In"}
                 </Button>
