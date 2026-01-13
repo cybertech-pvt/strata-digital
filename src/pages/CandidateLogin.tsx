@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Eye, EyeOff, User, Briefcase } from "lucide-react";
 import { z } from "zod";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "";
 
 const authSchema = z.object({
   email: z.string().trim().email("Please enter a valid email").max(255),
@@ -23,6 +26,7 @@ const CandidateLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const navigate = useNavigate();
+  const { token: captchaToken, isVerified: isCaptchaVerified, handleVerify, handleExpire, handleError, reset: resetCaptcha } = useTurnstile();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -46,6 +50,12 @@ const CandidateLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isCaptchaVerified) {
+      toast.error("Please complete the CAPTCHA verification.");
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
@@ -83,6 +93,7 @@ const CandidateLogin = () => {
         }
 
         toast.success("Account created! Please check your email to verify.");
+        resetCaptcha();
         setMode("login");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -93,6 +104,7 @@ const CandidateLogin = () => {
         if (error) throw error;
 
         toast.success("Welcome back!");
+        resetCaptcha();
         navigate("/candidate/dashboard");
       }
     } catch (error) {
@@ -103,6 +115,7 @@ const CandidateLogin = () => {
       } else {
         toast.error("An error occurred. Please try again.");
       }
+      resetCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -176,10 +189,20 @@ const CandidateLogin = () => {
                   </div>
                 </div>
 
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onVerify={handleVerify}
+                    onExpire={handleExpire}
+                    onError={handleError}
+                    theme="auto"
+                  />
+                </div>
+
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-teal to-lime text-navy font-semibold hover:opacity-90"
-                  disabled={isLoading}
+                  disabled={isLoading || !isCaptchaVerified}
                 >
                   {isLoading ? "Please wait..." : mode === "login" ? "Sign In" : "Create Account"}
                 </Button>

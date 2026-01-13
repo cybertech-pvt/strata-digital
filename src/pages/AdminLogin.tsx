@@ -7,7 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, Mail, Eye, EyeOff, ArrowLeft, Shield } from "lucide-react";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
 import logoDark from "@/assets/logo-dark.png";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "";
 
 type Mode = "login" | "forgot-password" | "reset-sent";
 
@@ -17,6 +20,7 @@ const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
+  const { token: captchaToken, isVerified: isCaptchaVerified, handleVerify, handleExpire, handleError, reset: resetCaptcha } = useTurnstile();
   
   const { signIn, user, loading } = useAuth();
   const { toast } = useToast();
@@ -44,6 +48,16 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isCaptchaVerified) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the CAPTCHA verification.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
@@ -70,6 +84,7 @@ const AdminLogin = () => {
               title: "Welcome Back",
               description: "You have been successfully logged in.",
             });
+            resetCaptcha();
             navigate("/secure-admin/dashboard");
           } else {
             await supabase.auth.signOut();
@@ -78,6 +93,7 @@ const AdminLogin = () => {
               description: "You do not have admin privileges.",
               variant: "destructive",
             });
+            resetCaptcha();
           }
         }
       }
@@ -87,6 +103,7 @@ const AdminLogin = () => {
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
+      resetCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -292,10 +309,20 @@ const AdminLogin = () => {
           </div>
         </div>
 
+        <div className="flex justify-center">
+          <Turnstile
+            siteKey={TURNSTILE_SITE_KEY}
+            onVerify={handleVerify}
+            onExpire={handleExpire}
+            onError={handleError}
+            theme="dark"
+          />
+        </div>
+
         <Button
           type="submit"
           className="w-full gradient-cta text-white hover:opacity-90"
-          disabled={isLoading}
+          disabled={isLoading || !isCaptchaVerified}
         >
           {isLoading ? "Please wait..." : "Sign In"}
         </Button>
