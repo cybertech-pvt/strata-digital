@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Turnstile, useTurnstile } from "@/components/ui/turnstile";
 import { z } from "zod";
 import { 
   Mail, 
@@ -19,6 +20,8 @@ import {
 } from "lucide-react";
 import googleQr from "@/assets/google-qr.png";
 import followQr from "@/assets/follow-qr.png";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
 // Validation schema for contact form
 const contactSchema = z.object({
@@ -83,6 +86,7 @@ const Contact = () => {
     message: "",
   });
   const { toast } = useToast();
+  const { token: turnstileToken, isVerified, handleVerify, handleExpire, handleError, reset: resetTurnstile } = useTurnstile();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -91,6 +95,17 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Verify CAPTCHA before submission
+    if (!isVerified || !turnstileToken) {
+      toast({
+        title: "Verification Required",
+        description: "Please complete the CAPTCHA verification.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -135,6 +150,7 @@ const Contact = () => {
       });
 
       setFormData({ name: "", email: "", company: "", message: "" });
+      resetTurnstile();
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Show first validation error
@@ -236,11 +252,20 @@ const Contact = () => {
                     className="border-border focus:border-teal"
                   />
                 </div>
+                <div className="mb-4">
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onVerify={handleVerify}
+                    onExpire={handleExpire}
+                    onError={handleError}
+                    theme="dark"
+                  />
+                </div>
                 <Button 
                   type="submit" 
                   size="lg" 
                   className="w-full gradient-cta text-white hover:opacity-90"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isVerified}
                 >
                   {isSubmitting ? (
                     "Sending..."
