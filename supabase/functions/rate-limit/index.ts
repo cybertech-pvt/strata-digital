@@ -11,6 +11,9 @@ const RATE_LIMITS: Record<string, { maxRequests: number; windowSeconds: number }
   contact: { maxRequests: 3, windowSeconds: 300 },      // 3 requests per 5 minutes
   newsletter: { maxRequests: 2, windowSeconds: 3600 },  // 2 requests per hour
   job_application: { maxRequests: 5, windowSeconds: 3600 }, // 5 applications per hour
+  admin_login: { maxRequests: 5, windowSeconds: 300 },   // 5 attempts per 5 minutes
+  employee_login: { maxRequests: 5, windowSeconds: 300 }, // 5 attempts per 5 minutes  
+  candidate_login: { maxRequests: 5, windowSeconds: 300 }, // 5 attempts per 5 minutes
 };
 
 // In-memory rate limit store (resets on function cold start)

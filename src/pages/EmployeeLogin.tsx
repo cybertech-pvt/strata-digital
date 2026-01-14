@@ -44,6 +44,19 @@ const EmployeeLogin = () => {
     checkSession();
   }, [navigate]);
 
+  const checkRateLimit = async (): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('rate-limit', {
+        body: { formType: 'employee_login', email }
+      });
+      if (error || !data?.allowed) {
+        toast.error(`Too many attempts. Please try again in ${data?.retryAfter || 60} seconds.`);
+        return false;
+      }
+      return true;
+    } catch { return true; }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -51,6 +64,9 @@ const EmployeeLogin = () => {
       toast.error("Please complete the CAPTCHA verification.");
       return;
     }
+
+    const rateLimitOk = await checkRateLimit();
+    if (!rateLimitOk) { resetCaptcha(); return; }
     
     setIsLoading(true);
 
