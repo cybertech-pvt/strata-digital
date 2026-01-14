@@ -11,3 +11,12 @@ verify_jwt = false
 
 [functions.audit-log]
 verify_jwt = false
+
+[functions.verify-2fa]
+verify_jwt = false
+
+[functions.setup-2fa]
+verify_jwt = false
+
+[functions.check-2fa-required]
+verify_jwt = false
