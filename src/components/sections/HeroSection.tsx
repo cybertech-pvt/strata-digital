@@ -20,9 +20,9 @@ export const HeroSection = () => {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight animate-fade-in-up">
               Securing{" "}
-              <span className="text-gradient-lime text-secondary-foreground bg-secondary-foreground">Tomorrow's</span>
+              <span className="text-gradient-lime">Tomorrow's</span>
               <br />
-              <span className="text-gradient-lime text-secondary-foreground bg-secondary-foreground">Technology</span>
+              <span className="text-gradient-lime">Technology</span>
               , Today.
             </h1>
 
@@ -39,7 +39,7 @@ export const HeroSection = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="px-8 border-teal/50 text-white hover:bg-teal/20 hover:border-teal">
+              <Button asChild variant="outline" size="lg" className="px-8 border-white/30 text-white hover:bg-white/10 hover:border-white/50 bg-white/5">
                 <Link to="/services">
                   <Play className="mr-2 h-5 w-5" />
                   Explore Services
