@@ -19,6 +19,7 @@ import Technologies from "./pages/Technologies";
 import Careers from "./pages/Careers";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
 
 // Auth Pages
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsConditions />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
 
             {/* ========================= */}
             {/* CANDIDATE PORTAL MODULE */}
