@@ -23,7 +23,6 @@ const footerLinks = {
   legal: [
     { name: "Privacy Policy", path: "/privacy" },
     { name: "Terms & Conditions", path: "/terms" },
-    { name: "Cookie Policy", path: "/cookies" },
   ],
 };
 
@@ -38,7 +37,7 @@ export const Footer = () => {
     <footer className="bg-navy text-white">
       {/* Main Footer */}
       <div className="container mx-auto px-4 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="mb-6">
@@ -125,7 +124,23 @@ export const Footer = () => {
               ))}
             </ul>
           </div>
-        </div>
+
+          {/* Legal Links */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <ul className="space-y-3">
+              {footerLinks.legal.map((link, index) => (
+                <li key={index}>
+                  <Link
+                    to={link.path}
+                    className="text-sm text-white/70 hover:text-lime transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
       </div>
 
       {/* Bottom Footer */}
@@ -136,7 +151,8 @@ export const Footer = () => {
               <p className="text-sm text-white/60">
                 © {new Date().getFullYear()} CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED. All rights reserved.
               </p>
-            </div>
+        </div>
+      </div>
             <div className="flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a

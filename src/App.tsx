@@ -17,6 +17,8 @@ import Industries from "./pages/Industries";
 import WhyUs from "./pages/WhyUs";
 import Technologies from "./pages/Technologies";
 import Careers from "./pages/Careers";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import Contact from "./pages/Contact";
 
 // Auth Pages
@@ -75,6 +77,8 @@ const App = () => (
             <Route path="/technologies" element={<Technologies />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsConditions />} />
 
             {/* ========================= */}
             {/* CANDIDATE PORTAL MODULE */}
