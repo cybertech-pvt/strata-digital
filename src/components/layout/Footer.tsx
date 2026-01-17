@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Linkedin, Facebook, Instagram, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Linkedin, Facebook, Instagram, Youtube, Twitter, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import logoDark from "@/assets/logo-dark.png";
 
 const footerLinks = {
@@ -33,6 +33,7 @@ const socialLinks = [
   { icon: Instagram, href: "https://www.instagram.com/cybervibe.global/", label: "Instagram" },
   { icon: Youtube, href: "https://www.youtube.com/@cybervibeglobal", label: "YouTube" },
   { icon: Twitter, href: "https://twitter.com/cybervibeglobal", label: "Twitter" },
+  { icon: MessageCircle, href: "https://wa.me/918248827991", label: "WhatsApp" },
 ];
 
 export const Footer = () => {
