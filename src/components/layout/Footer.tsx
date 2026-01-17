@@ -45,6 +45,9 @@ export const Footer = () => {
               <img 
                 src={logoDark} 
                 alt="CYBERVIBE Global Solutions" 
+                width={155}
+                height={64}
+                loading="lazy"
                 className="h-16 w-auto"
               />
             </div>

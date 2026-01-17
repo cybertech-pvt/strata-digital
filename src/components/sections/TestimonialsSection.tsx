@@ -6,28 +6,28 @@ const testimonials = [
     author: "Sarah Chen",
     role: "CTO",
     company: "Global Finance Corp",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=56&h=56&fit=crop&crop=face&fm=webp&q=80",
   },
   {
     quote: "The cybersecurity solutions implemented by CYBERVIBE have significantly strengthened our security posture. Their team's knowledge and professionalism are unmatched.",
     author: "Michael Rodriguez",
     role: "CISO",
     company: "HealthTech Solutions",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=56&h=56&fit=crop&crop=face&fm=webp&q=80",
   },
   {
     quote: "Working with CYBERVIBE on our AI initiative was a game-changer. They delivered innovative solutions that gave us a competitive edge in the market.",
     author: "Emily Watson",
     role: "VP of Innovation",
     company: "RetailMax Industries",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=56&h=56&fit=crop&crop=face&fm=webp&q=80",
   },
   {
     quote: "Their agile approach and deep technical expertise helped us launch our product 40% faster than projected. Truly a world-class technology partner.",
     author: "David Kim",
     role: "CEO",
     company: "TechStart Ventures",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=56&h=56&fit=crop&crop=face&fm=webp&q=80",
   },
 ];
 
@@ -61,6 +61,9 @@ export const TestimonialsSection = () => {
                 <img
                   src={testimonial.image}
                   alt={testimonial.author}
+                  width={56}
+                  height={56}
+                  loading="lazy"
                   className="w-14 h-14 rounded-full object-cover border-2 border-primary"
                 />
                 <div>

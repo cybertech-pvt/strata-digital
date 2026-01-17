@@ -48,7 +48,7 @@ export const Header = () => {
         <nav className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img alt="CYBERVIBE Global Solutions" className="h-12 w-auto" src="/lovable-uploads/125230dd-1f9f-4b07-b7c7-58d6d54d2334.png" />
+            <img alt="CYBERVIBE Global Solutions" className="h-12 w-auto" src="/lovable-uploads/125230dd-1f9f-4b07-b7c7-58d6d54d2334.png" width={48} height={48} />
           </Link>
 
           {/* Desktop Navigation */}

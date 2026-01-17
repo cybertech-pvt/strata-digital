@@ -68,7 +68,7 @@ export const HeroSection = () => {
           <div className="relative hidden lg:block animate-scale-in">
             <div className="relative">
               <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-50 animate-pulse-glow" />
-              <img src={bannerImage} alt="CYBERVIBE Global Solutions - Securing Tomorrow's Technology, Today" className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20" />
+              <img src={bannerImage} alt="CYBERVIBE Global Solutions - Securing Tomorrow's Technology, Today" width={612} height={408} className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20" fetchPriority="high" />
               {/* Floating Card */}
               <div className="absolute -bottom-6 -left-6 bg-navy-light p-6 rounded-2xl shadow-card border border-teal/20 animate-float">
                 <div className="flex items-center gap-4">

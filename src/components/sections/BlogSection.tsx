@@ -9,7 +9,7 @@ const blogPosts = [
     id: 1,
     title: "The Future of Cybersecurity: AI-Powered Threat Detection",
     excerpt: "Explore how artificial intelligence is revolutionizing the way organizations detect and respond to cyber threats in real-time.",
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&h=267&fit=crop&fm=webp&q=80",
     author: "Dr. Priya Sharma",
     date: "Dec 28, 2024",
     readTime: "5 min read",
@@ -19,7 +19,7 @@ const blogPosts = [
     id: 2,
     title: "Cloud Migration Best Practices for Enterprise Success",
     excerpt: "A comprehensive guide to planning and executing successful cloud migration strategies for large-scale enterprises.",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=267&fit=crop&fm=webp&q=80",
     author: "Rajesh Kumar",
     date: "Dec 20, 2024",
     readTime: "7 min read",
@@ -29,7 +29,7 @@ const blogPosts = [
     id: 3,
     title: "Zero Trust Architecture: A Modern Security Approach",
     excerpt: "Understanding the principles of Zero Trust and how it can strengthen your organization's security posture.",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&h=267&fit=crop&fm=webp&q=80",
     author: "Arun Patel",
     date: "Dec 15, 2024",
     readTime: "6 min read",
@@ -74,6 +74,9 @@ export const BlogSection = () => {
                 <img
                   src={post.image}
                   alt={post.title}
+                  width={400}
+                  height={192}
+                  loading="lazy"
                   className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute top-4 left-4">

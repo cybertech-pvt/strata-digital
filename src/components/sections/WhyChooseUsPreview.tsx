@@ -75,8 +75,11 @@ export const WhyChooseUsPreview = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-30" />
             <img
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=604&h=453&fit=crop&fm=webp&q=80"
               alt="Professional team of technology consultants in a modern office"
+              width={604}
+              height={453}
+              loading="lazy"
               className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20"
             />
             {/* Stats Card */}
