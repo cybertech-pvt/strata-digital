@@ -54,10 +54,6 @@ export const Footer = () => {
             <p className="text-lime font-medium italic mb-4">
               "Securing Tomorrow's Technology, Today."
             </p>
-            <p className="text-white/70 text-sm leading-relaxed mb-6 max-w-sm">
-              CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED is a leading technology consulting and services company, 
-              delivering innovative solutions to enterprises worldwide.
-            </p>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-white/70">
                 <MapPin size={16} className="text-teal" />
