@@ -141,23 +141,23 @@ export const Footer = () => {
               ))}
             </ul>
           </div>
+        </div>
       </div>
 
       {/* Bottom Footer */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-6">
-              <p className="text-sm text-white/60">
-                © {new Date().getFullYear()} CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED. All rights reserved.
-              </p>
-        </div>
-      </div>
-            <div className="flex items-center gap-2">
+            <p className="text-sm text-white/60">
+              © {new Date().getFullYear()} CYBERVIBE GLOBAL SOLUTIONS PRIVATE LIMITED. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
                   className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white/70 hover:bg-teal hover:text-white transition-all"
                 >
