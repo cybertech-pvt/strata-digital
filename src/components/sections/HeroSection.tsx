@@ -6,8 +6,8 @@ export const HeroSection = () => {
   return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
       {/* Background Effects */}
       <div className="absolute inset-0 gradient-hero" />
-      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-teal/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-teal/10 rounded-full opacity-50" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/5 rounded-full opacity-50" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -67,7 +67,7 @@ export const HeroSection = () => {
           {/* Visual - Banner Image */}
           <div className="relative hidden lg:block animate-scale-in">
             <div className="relative">
-              <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-50 animate-pulse-glow" />
+              <div className="absolute inset-0 bg-teal/20 rounded-3xl opacity-30 animate-pulse-glow" />
               <img src={bannerImage} alt="CYBERVIBE Global Solutions - Securing Tomorrow's Technology, Today" width={612} height={408} className="relative rounded-3xl shadow-2xl w-full object-cover border border-teal/20" fetchPriority="high" />
               {/* Floating Card */}
               <div className="absolute -bottom-6 -left-6 bg-navy-light p-6 rounded-2xl shadow-card border border-teal/20 animate-float">

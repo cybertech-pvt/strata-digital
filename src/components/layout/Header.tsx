@@ -43,7 +43,7 @@ export const Header = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location]);
-  return <header className={cn("fixed top-0 left-0 right-0 z-50 transition-all duration-300", isScrolled ? "bg-navy/95 backdrop-blur-md shadow-lg border-b border-teal/20" : "bg-transparent")}>
+  return <header className={cn("fixed top-0 left-0 right-0 z-50 transition-all duration-300", isScrolled ? "bg-navy shadow-lg border-b border-teal/20" : "bg-transparent")}>
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between h-20">
           {/* Logo */}
