@@ -6,8 +6,8 @@ export const CTASection = () => {
   return (
     <section className="py-24 relative overflow-hidden bg-navy">
       <div className="absolute inset-0 gradient-hero" />
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal/20 rounded-full opacity-30" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/10 rounded-full opacity-30" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
