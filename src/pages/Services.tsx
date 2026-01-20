@@ -99,7 +99,7 @@ const Services = () => {
       {/* Hero */}
       <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full opacity-50" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-lime font-semibold text-sm uppercase tracking-wider">
@@ -152,7 +152,7 @@ const Services = () => {
                 </div>
                 <div className={index % 2 === 1 ? "lg:order-1" : ""}>
                   <div className="relative">
-                    <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-30" />
+                    <div className="absolute inset-0 bg-teal/20 rounded-3xl opacity-20" />
                     <div className="relative bg-gradient-to-br from-navy to-navy-light rounded-3xl p-12 flex items-center justify-center min-h-[400px] border border-teal/20">
                       <service.icon className="w-32 h-32 text-teal/30" />
                     </div>

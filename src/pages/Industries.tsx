@@ -98,7 +98,7 @@ const Industries = () => {
       {/* Hero */}
       <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full opacity-50" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-lime font-semibold text-sm uppercase tracking-wider">

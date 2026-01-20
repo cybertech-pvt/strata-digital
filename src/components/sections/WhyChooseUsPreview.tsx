@@ -73,7 +73,7 @@ export const WhyChooseUsPreview = () => {
 
           {/* Visual */}
           <div className="relative">
-            <div className="absolute inset-0 bg-teal/20 rounded-3xl blur-3xl opacity-30" />
+            <div className="absolute inset-0 bg-teal/20 rounded-3xl opacity-20" />
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=604&h=453&fit=crop&fm=webp&q=80"
               alt="Professional team of technology consultants in a modern office"
