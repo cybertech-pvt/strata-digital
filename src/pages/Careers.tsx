@@ -560,7 +560,7 @@ const Careers = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+            <Button asChild size="lg" className="bg-navy border-2 border-lime text-lime hover:bg-lime/10">
               <Link to="/candidate/login">
                 Candidate Portal
                 <Users className="ml-2 h-5 w-5" />
