@@ -106,8 +106,8 @@ export const NewsletterSection = () => {
   return (
     <section ref={ref} className="py-20 bg-navy relative overflow-hidden">
       <div className="absolute inset-0 gradient-hero opacity-50" />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal/10 rounded-full opacity-50" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/10 rounded-full opacity-50" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div
