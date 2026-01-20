@@ -12,15 +12,37 @@ serve(async (req) => {
   }
 
   try {
-    const { userId } = await req.json();
-
-    if (!userId) {
+    // Require authentication - extract user from JWT
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.log('Missing or invalid authorization header');
       return new Response(
-        JSON.stringify({ error: 'User ID required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    // Create client with user's auth context
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Validate the JWT and get authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      console.log('Failed to authenticate user:', userError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Use authenticated user's ID - not client-provided
+    const userId = user.id;
+
+    // Use service role for admin lookups
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -51,7 +73,7 @@ serve(async (req) => {
 
     const is2FAEnabled = twoFaData?.is_enabled || false;
 
-    console.log(`2FA check for user ${userId}: isAdmin=true, 2faEnabled=${is2FAEnabled}`);
+    console.log(`2FA check for authenticated user ${userId}: isAdmin=true, 2faEnabled=${is2FAEnabled}`);
 
     return new Response(
       JSON.stringify({ 
