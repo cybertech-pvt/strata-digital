@@ -57,19 +57,33 @@ export const Footer = () => {
             <p className="text-lime font-medium italic mb-4">
               "Securing Tomorrow's Technology, Today."
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm text-white/70">
-                <MapPin size={16} className="text-teal" />
-                <span>Headquarters: Tamil Nadu, India</span>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-start gap-3 text-sm text-white/70">
+                  <MapPin size={16} className="text-teal mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-lime text-xs font-medium block mb-1">Headquarters</span>
+                    <span>185, MELUR, Natrampalli, Pachur, Vellore, Tamil Nadu 635854</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-start gap-3 text-sm text-white/70">
+                  <MapPin size={16} className="text-teal mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-lime text-xs font-medium block mb-1">Corporate Office</span>
+                    <span>Plot No. 1, JN Salai, SIDCO Industrial Estate, Guindy, Chennai 600032</span>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/70">
-                <Mail size={16} className="text-teal" />
+                <Mail size={16} className="text-teal flex-shrink-0" />
                 <a href="mailto:support@cybervibeglobal.com" className="hover:text-lime transition-colors">
                   support@cybervibeglobal.com
                 </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/70">
-                <Phone size={16} className="text-teal" />
+                <Phone size={16} className="text-teal flex-shrink-0" />
                 <a href="tel:+918248827991" className="hover:text-lime transition-colors">
                   +91 8248827991
                 </a>
