@@ -4,10 +4,13 @@ import { ArrowRight, Play } from "lucide-react";
 import bannerImage from "@/assets/banner.png";
 export const HeroSection = () => {
   return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
-      {/* Background Effects */}
+      {/* Background Effects - Layered Gradients */}
       <div className="absolute inset-0 gradient-hero" />
-      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-teal/10 rounded-full opacity-50" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-lime/5 rounded-full opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-br from-teal/5 via-transparent to-lime/5" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-transparent" />
+      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-gradient-radial from-teal/15 to-transparent rounded-full" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-radial from-lime/10 to-transparent rounded-full" />
+      <div className="absolute top-0 left-1/3 w-[300px] h-[300px] bg-gradient-radial from-teal/8 to-transparent rounded-full" />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">

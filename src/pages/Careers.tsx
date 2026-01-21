@@ -214,8 +214,12 @@ const Careers = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
+      <section className="pt-32 pb-20 relative overflow-hidden bg-navy">
         <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute inset-0 bg-gradient-to-br from-lime/5 via-transparent to-teal/5" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-navy/50 to-navy" />
+        <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-gradient-radial from-teal/15 to-transparent rounded-full" />
+        <div className="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-gradient-radial from-lime/10 to-transparent rounded-full" />
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <span className="text-primary font-semibold text-sm uppercase tracking-wider">
