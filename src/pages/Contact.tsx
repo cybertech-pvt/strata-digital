@@ -72,7 +72,18 @@ const contactInfo = [
 ];
 
 const offices = [
-  { city: "Tamil Nadu", country: "India", type: "Headquarters" },
+  { 
+    city: "Vellore", 
+    country: "India", 
+    type: "Headquarters / Registered Address",
+    address: "185, MELUR, Natrampalli, Pachur, Vellore, Tirupattur, Tamil Nadu, 635854"
+  },
+  { 
+    city: "Chennai", 
+    country: "India", 
+    type: "Corporate Office",
+    address: "Plot No. 1, Jawaharlal Nehru Salai, SIDCO Industrial Estate, Guindy, Chennai, Tamil Nadu 600032"
+  },
 ];
 
 const websiteUrl = "www.cybervibeglobal.com";
@@ -307,7 +318,8 @@ const Contact = () => {
                   <div key={office.city} className="bg-card p-4 rounded-xl border border-border hover:border-teal/30 transition-colors">
                     <h4 className="font-semibold text-foreground">{office.city}</h4>
                     <p className="text-sm text-muted-foreground">{office.country}</p>
-                    <span className="text-xs text-lime">{office.type}</span>
+                    <span className="text-xs text-lime block mb-2">{office.type}</span>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{office.address}</p>
                   </div>
                 ))}
               </div>
