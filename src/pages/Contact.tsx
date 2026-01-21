@@ -375,13 +375,60 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Interactive Maps */}
       <section className="py-20 bg-navy">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="bg-navy-light rounded-3xl h-[400px] flex items-center justify-center border border-teal/20">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-teal/50 mx-auto mb-4" />
-              <p className="text-white/60">Interactive Map Coming Soon</p>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Our Locations</h2>
+            <p className="text-white/60">Visit us at our offices across Tamil Nadu</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Headquarters Map */}
+            <div className="space-y-4">
+              <div className="bg-navy-light rounded-xl p-4 border border-teal/20">
+                <h3 className="font-semibold text-white mb-1">Headquarters / Registered Office</h3>
+                <p className="text-sm text-white/60">Vellore, Tamil Nadu</p>
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-teal/20 h-[300px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3885.5!2d78.6!3d12.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU0JzAwLjAiTiA3OMKwMzYnMDAuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="CYBERVIBE Headquarters - Vellore"
+                  className="w-full h-full"
+                />
+              </div>
+              <p className="text-xs text-white/50 text-center">
+                185, MELUR, Natrampalli, Pachur, Vellore, Tirupattur, Tamil Nadu 635854
+              </p>
+            </div>
+
+            {/* Corporate Office Map */}
+            <div className="space-y-4">
+              <div className="bg-navy-light rounded-xl p-4 border border-teal/20">
+                <h3 className="font-semibold text-white mb-1">Corporate Office</h3>
+                <p className="text-sm text-white/60">Chennai, Tamil Nadu</p>
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-teal/20 h-[300px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.5!2d80.2!3d13.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5266e8c1f6ba87%3A0x8c1e3c9b8b8b8b8b!2sSIDCO%20Industrial%20Estate%2C%20Guindy!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="CYBERVIBE Corporate Office - Chennai"
+                  className="w-full h-full"
+                />
+              </div>
+              <p className="text-xs text-white/50 text-center">
+                Plot No. 1, Jawaharlal Nehru Salai, SIDCO Industrial Estate, Guindy, Chennai 600032
+              </p>
             </div>
           </div>
         </div>
