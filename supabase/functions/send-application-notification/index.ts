@@ -215,7 +215,7 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error sending notification:", error);
     return new Response(
       JSON.stringify({ error: error.message }),

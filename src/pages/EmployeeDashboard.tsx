@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -83,11 +83,7 @@ const EmployeeDashboard = () => {
     reason: "",
   });
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate("/employee/login");
@@ -111,7 +107,11 @@ const EmployeeDashboard = () => {
     await fetchData(session.user.id);
     await fetchProfile(session.user.id);
     setLoading(false);
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const fetchProfile = async (uid: string) => {
     const { data } = await supabase

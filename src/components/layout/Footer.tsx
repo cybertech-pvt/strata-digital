@@ -176,7 +176,7 @@ export const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white/70 hover:bg-teal hover:text-white transition-all"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-white/70 hover:bg-teal hover:text-white transition-all"
                 >
                   <social.icon size={18} />
                 </a>

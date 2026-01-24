@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -100,11 +100,7 @@ const CandidateDashboard = () => {
   const [uploadingResume, setUploadingResume] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate("/candidate/login");
@@ -127,7 +123,11 @@ const CandidateDashboard = () => {
     setUserId(session.user.id);
     await fetchData(session.user.id);
     setLoading(false);
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const fetchData = async (uid: string) => {
     const [profileRes, jobsRes, appsRes, interviewsRes] = await Promise.all([

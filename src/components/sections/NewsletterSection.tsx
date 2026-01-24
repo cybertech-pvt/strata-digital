@@ -153,7 +153,7 @@ export const NewsletterSection = () => {
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-teal h-12"
+                className="border-white/20 text-white placeholder:text-white/50 focus:border-teal h-12"
                 disabled={isLoading}
                 required
               />

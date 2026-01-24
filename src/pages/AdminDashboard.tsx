@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -254,13 +254,7 @@ const AdminDashboard = () => {
     }
   }, [user, loading, navigate, toast]);
 
-  useEffect(() => {
-    if (user && isAdmin) {
-      fetchAllData();
-    }
-  }, [user, isAdmin]);
-
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     setLoadingData(true);
     try {
       const [
@@ -303,7 +297,13 @@ const AdminDashboard = () => {
     } finally {
       setLoadingData(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchAllData();
+    }
+  }, [user, isAdmin, fetchAllData]);
 
   const handleSignOut = async () => {
     await signOut();
