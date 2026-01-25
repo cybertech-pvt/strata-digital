@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import bannerImage from "@/assets/banner.png";
 export const HeroSection = () => {
-  return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
+  return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden" style={{background: "hsl(210 50% 8%)"}}>
       {/* Background Effects - Layered Gradients */}
       <div className="absolute inset-0 gradient-hero" />
       <div className="absolute inset-0 bg-gradient-to-br from-teal/5 via-transparent to-lime/5" />
@@ -16,12 +16,12 @@ export const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal/20 text-teal-light text-sm font-medium animate-fade-in border border-teal/30">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium animate-fade-in" style={{background: "hsla(195, 60%, 40%, 0.2)", color: "hsl(195, 55%, 50%)", border: "1px solid hsla(195, 60%, 40%, 0.3)"}}>
               <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
               Leading Digital Transformation
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight animate-fade-in-up">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight animate-fade-in-up" style={{color: "white"}}>
               Securing{" "}
               <span className="text-gradient-lime">Tomorrow's</span>
               <br />
@@ -29,7 +29,7 @@ export const HeroSection = () => {
               , Today.
             </h1>
 
-            <p className="text-lg text-white/70 max-w-xl animate-fade-in-up stagger-2">
+            <p className="text-lg max-w-xl animate-fade-in-up stagger-2" style={{color: "rgba(255, 255, 255, 0.7)"}}>
               We partner with global enterprises to deliver cutting-edge technology solutions, 
               enabling digital transformation and sustainable business growth through innovation, 
               expertise, and unwavering commitment to excellence.
