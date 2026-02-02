@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
-import bannerImage from "@/assets/Banner.png";
+import bannerImage from "@/assets/banner.png";
 export const HeroSection = () => {
   return <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-navy">
       {/* Background Effects - Layered Gradients */}
