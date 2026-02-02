@@ -114,7 +114,7 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "CYBERVIBE Careers <onboarding@resend.dev>",
+        from: "CYBERVIBE Careers <careers@cybervibeglobal.com>",
         to: [candidate_email],
         subject: `Application Received: ${safePosition} - CYBERVIBE Global Solutions`,
         html: emailHtml,
