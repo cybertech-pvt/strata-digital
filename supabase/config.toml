@@ -3,6 +3,9 @@ project_id = "hyackhbgbiunkijipqhk"
 [functions.send-application-notification]
 verify_jwt = false
 
+[functions.send-candidate-confirmation]
+verify_jwt = false
+
 [functions.rate-limit]
 verify_jwt = false
 
