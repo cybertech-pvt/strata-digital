@@ -174,7 +174,7 @@ const Careers = () => {
         return;
       }
 
-      const { error } = await supabase.from("job_applications").insert({
+      const { data: applicationData, error } = await supabase.from("job_applications").insert({
         position: validatedData.position,
         name: validatedData.name,
         email: validatedData.email,
@@ -183,9 +183,23 @@ const Careers = () => {
         current_company: validatedData.current_company || null,
         linkedin_url: validatedData.linkedin_url || null,
         cover_letter: validatedData.cover_letter,
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Send confirmation email to candidate
+      try {
+        await supabase.functions.invoke('send-candidate-confirmation', {
+          body: {
+            candidate_email: validatedData.email,
+            candidate_name: validatedData.name,
+            position: validatedData.position,
+          }
+        });
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+        // Don't fail the submission if email fails
+      }
 
       toast.success("Application submitted successfully! We'll be in touch soon.");
       setShowApplicationForm(false);
