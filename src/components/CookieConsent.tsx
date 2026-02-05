@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { X, Cookie, Settings } from "lucide-react";
@@ -18,7 +18,7 @@ const defaultPreferences: CookiePreferences = {
   marketing: false,
 };
 
-export const CookieConsent = () => {
+ const CookieConsentInner = forwardRef<HTMLDivElement>((_, ref) => {
   const [showBanner, setShowBanner] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
@@ -62,10 +62,11 @@ export const CookieConsent = () => {
     setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  return (
-    <AnimatePresence>
+   return (
+     <AnimatePresence>
       {showBanner && (
         <motion.div
+           ref={ref}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
@@ -251,4 +252,8 @@ export const CookieConsent = () => {
       )}
     </AnimatePresence>
   );
-};
+ });
+ 
+ CookieConsentInner.displayName = "CookieConsent";
+ 
+ export const CookieConsent = CookieConsentInner;

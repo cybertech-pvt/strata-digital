@@ -1,8 +1,9 @@
-import { MessageCircle, Phone } from "lucide-react";
+ import { forwardRef } from "react";
+ import { MessageCircle, Phone } from "lucide-react";
 
-export const FloatingWhatsApp = () => {
-  return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+ export const FloatingWhatsApp = forwardRef<HTMLDivElement>((_, ref) => {
+   return (
+     <div ref={ref} className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
       {/* Call Button */}
       <a
         href="tel:+918248827991"
@@ -29,5 +30,7 @@ export const FloatingWhatsApp = () => {
         </span>
       </a>
     </div>
-  );
-};
+   );
+ });
+ 
+ FloatingWhatsApp.displayName = "FloatingWhatsApp";
