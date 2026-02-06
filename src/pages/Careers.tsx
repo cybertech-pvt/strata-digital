@@ -161,18 +161,26 @@ const Careers = () => {
       });
 
       // Check rate limit before submission
-      const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('rate-limit', {
-        body: { formType: 'job_application', email: validatedData.email }
-      });
+      let rateLimitPassed = true;
+      try {
+        const { data: rateLimitData, error: rateLimitError } = await supabase.functions.invoke('rate-limit', {
+          body: { formType: 'job_application', email: validatedData.email }
+        });
 
-      if (rateLimitError) {
-        console.error('Rate limit check failed:', rateLimitError);
+        if (rateLimitError) {
+          console.error('Rate limit check failed:', rateLimitError);
+          // Continue with submission if rate limit check fails (fail-open for UX)
+        } else if (rateLimitData && !rateLimitData.allowed) {
+          toast.error(rateLimitData.error || "Too many applications. Please wait before submitting again.");
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (rateLimitCatchError) {
+        console.error('Rate limit function error:', rateLimitCatchError);
         // Continue with submission if rate limit check fails (fail-open for UX)
-      } else if (rateLimitData && !rateLimitData.allowed) {
-        toast.error(rateLimitData.error || "Too many applications. Please wait before submitting again.");
-        setIsSubmitting(false);
-        return;
       }
+
+      console.log('Submitting application with data:', validatedData);
 
       const { data: applicationData, error } = await supabase.from("job_applications").insert({
         position: validatedData.position,
@@ -185,7 +193,12 @@ const Careers = () => {
         cover_letter: validatedData.cover_letter,
       }).select().single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+
+      console.log('Application submitted successfully:', applicationData);
 
       // Send confirmation email to candidate
       try {
@@ -215,8 +228,11 @@ const Careers = () => {
       });
       setSelectedPosition("");
     } catch (error) {
+      console.error('Form submission error:', error);
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        toast.error(`Failed to submit: ${(error as { message: string }).message}`);
       } else {
         toast.error("Failed to submit application. Please try again.");
       }
