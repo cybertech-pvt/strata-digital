@@ -182,7 +182,7 @@ const Careers = () => {
 
       console.log('Submitting application with data:', validatedData);
 
-      const { data: applicationData, error } = await supabase.from("job_applications").insert({
+      const { error } = await supabase.from("job_applications").insert({
         position: validatedData.position,
         name: validatedData.name,
         email: validatedData.email,
@@ -191,14 +191,14 @@ const Careers = () => {
         current_company: validatedData.current_company || null,
         linkedin_url: validatedData.linkedin_url || null,
         cover_letter: validatedData.cover_letter,
-      }).select().single();
+      });
 
       if (error) {
         console.error('Supabase insert error:', error);
         throw error;
       }
 
-      console.log('Application submitted successfully:', applicationData);
+      console.log('Application submitted successfully');
 
       // Send confirmation email to candidate
       try {
