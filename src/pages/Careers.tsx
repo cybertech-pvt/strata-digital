@@ -200,17 +200,22 @@ const Careers = () => {
 
       console.log('Application submitted successfully');
 
-      // Send confirmation email to candidate
+      // Send confirmation email to candidate + notification to employer
       try {
         await supabase.functions.invoke('send-candidate-confirmation', {
           body: {
             candidate_email: validatedData.email,
             candidate_name: validatedData.name,
             position: validatedData.position,
+            phone: validatedData.phone,
+            experience_years: validatedData.experience_years,
+            current_company: validatedData.current_company || '',
+            linkedin_url: validatedData.linkedin_url || '',
+            cover_letter: validatedData.cover_letter,
           }
         });
       } catch (emailError) {
-        console.error('Failed to send confirmation email:', emailError);
+        console.error('Failed to send emails:', emailError);
         // Don't fail the submission if email fails
       }
 
