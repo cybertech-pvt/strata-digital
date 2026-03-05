@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,49 +77,24 @@ const benefits = [
   },
 ];
 
-const openPositions = [
-  {
-    title: "Senior Software Engineer",
-    department: "Engineering",
-    location: "Remote / Hybrid",
-    type: "Full-time",
-  },
-  {
-    title: "Cloud Solutions Architect",
-    department: "Cloud Practice",
-    location: "Multiple Locations",
-    type: "Full-time",
-  },
-  {
-    title: "Cybersecurity Analyst",
-    department: "Security",
-    location: "Remote / Hybrid",
-    type: "Full-time",
-  },
-  {
-    title: "Data Scientist",
-    department: "AI & Analytics",
-    location: "Multiple Locations",
-    type: "Full-time",
-  },
-  {
-    title: "Project Manager",
-    department: "Delivery",
-    location: "Remote / Hybrid",
-    type: "Full-time",
-  },
-  {
-    title: "UX/UI Designer",
-    department: "Design",
-    location: "Remote / Hybrid",
-    type: "Full-time",
-  },
-];
+// Positions are now fetched from the database
+
+interface JobPost {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  is_active: boolean;
+}
 
 const Careers = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openPositions, setOpenPositions] = useState<JobPost[]>([]);
+  const [loadingPositions, setLoadingPositions] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -130,6 +105,23 @@ const Careers = () => {
     cover_letter: "",
   });
   const { token: turnstileToken, isVerified, handleVerify, handleExpire, handleError, reset: resetTurnstile } = useTurnstile();
+
+  // Fetch active job posts from database
+  useEffect(() => {
+    const fetchPositions = async () => {
+      const { data, error } = await supabase
+        .from("job_posts")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+      
+      if (!error && data) {
+        setOpenPositions(data);
+      }
+      setLoadingPositions(false);
+    };
+    fetchPositions();
+  }, []);
 
   const handleApply = (positionTitle: string) => {
     setSelectedPosition(positionTitle);
@@ -370,40 +362,51 @@ const Careers = () => {
             </p>
           </div>
           <div className="max-w-4xl mx-auto space-y-4">
-            {openPositions.map((position, index) => (
-              <div
-                key={position.title}
-                className="group bg-card p-6 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {position.title}
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
-                      <span>{position.department}</span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {position.location}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {position.type}
-                      </span>
-                    </div>
-                  </div>
-                  <Button 
-                    onClick={() => handleApply(position.title)}
-                    variant="outline" 
-                    className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
-                  >
-                    Apply Now
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
+            {loadingPositions ? (
+              <div className="text-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                <p className="text-muted-foreground mt-4">Loading positions...</p>
               </div>
-            ))}
+            ) : openPositions.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No open positions at the moment. Check back soon!</p>
+              </div>
+            ) : (
+              openPositions.map((position, index) => (
+                <div
+                  key={position.id}
+                  className="group bg-card p-6 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {position.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
+                        <span>{position.department}</span>
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {position.location}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {position.type}
+                        </span>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => handleApply(position.title)}
+                      variant="outline" 
+                      className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                    >
+                      Apply Now
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
           <div className="text-center mt-12">
             <p className="text-muted-foreground mb-4">
