@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,8 @@ const CandidateLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/candidate/dashboard";
   const { token: captchaToken, isVerified: isCaptchaVerified, handleVerify, handleExpire, handleError, reset: resetCaptcha } = useTurnstile();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const CandidateLogin = () => {
           .maybeSingle();
         
         if (roleData) {
-          navigate("/candidate/dashboard");
+          navigate(redirectTo);
         }
       }
     };
@@ -121,7 +123,7 @@ const CandidateLogin = () => {
 
         toast.success("Welcome back!");
         resetCaptcha();
-        navigate("/candidate/dashboard");
+        navigate(redirectTo);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

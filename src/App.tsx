@@ -20,6 +20,8 @@ const Industries = lazy(() => import("./pages/Industries"));
 const WhyUs = lazy(() => import("./pages/WhyUs"));
 const Technologies = lazy(() => import("./pages/Technologies"));
 const Careers = lazy(() => import("./pages/Careers"));
+const JobDetail = lazy(() => import("./pages/JobDetail"));
+const JobApply = lazy(() => import("./pages/JobApply"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
@@ -88,6 +90,8 @@ const App = () => (
               <Route path="/why-us" element={<WhyUs />} />
               <Route path="/technologies" element={<Technologies />} />
               <Route path="/careers" element={<Careers />} />
+              <Route path="/careers/:id" element={<JobDetail />} />
+              <Route path="/careers/:id/apply" element={<JobApply />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsConditions />} />
