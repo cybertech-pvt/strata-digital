@@ -26,6 +26,8 @@ const CandidateLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/candidate/dashboard";
   const { token: captchaToken, isVerified: isCaptchaVerified, handleVerify, handleExpire, handleError, reset: resetCaptcha } = useTurnstile();
 
   useEffect(() => {
