@@ -123,7 +123,7 @@ const CandidateLogin = () => {
 
         toast.success("Welcome back!");
         resetCaptcha();
-        navigate("/candidate/dashboard");
+        navigate(redirectTo);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
