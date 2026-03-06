@@ -20,6 +20,8 @@ const Industries = lazy(() => import("./pages/Industries"));
 const WhyUs = lazy(() => import("./pages/WhyUs"));
 const Technologies = lazy(() => import("./pages/Technologies"));
 const Careers = lazy(() => import("./pages/Careers"));
+const JobDetail = lazy(() => import("./pages/JobDetail"));
+const JobApply = lazy(() => import("./pages/JobApply"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
