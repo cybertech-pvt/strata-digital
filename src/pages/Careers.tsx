@@ -373,9 +373,10 @@ const Careers = () => {
               </div>
             ) : (
               openPositions.map((position, index) => (
-                <div
+                <Link
+                  to={`/careers/${position.id}`}
                   key={position.id}
-                  className="group bg-card p-6 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in"
+                  className="group bg-card p-6 rounded-2xl shadow-card hover-lift cursor-pointer animate-fade-in block"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -396,15 +397,15 @@ const Careers = () => {
                       </div>
                     </div>
                     <Button 
-                      onClick={() => handleApply(position.title)}
                       variant="outline" 
                       className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+                      tabIndex={-1}
                     >
-                      Apply Now
+                      View Details
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
-                </div>
+                </Link>
               ))
             )}
           </div>
