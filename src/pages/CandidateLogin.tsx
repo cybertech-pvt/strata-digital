@@ -43,7 +43,7 @@ const CandidateLogin = () => {
           .maybeSingle();
         
         if (roleData) {
-          navigate("/candidate/dashboard");
+          navigate(redirectTo);
         }
       }
     };
