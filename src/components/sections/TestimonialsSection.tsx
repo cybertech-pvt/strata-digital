@@ -3,9 +3,9 @@ import { Quote } from "lucide-react";
 const testimonials = [
   {
     quote: "CYBERVIBE transformed our legacy systems into a modern, scalable platform. Their expertise in cloud migration was exceptional, and they delivered ahead of schedule.",
-    author: "Sarah Chen",
-    role: "CTO",
-    company: "Global Finance Corp",
+    author: "Pavithra YS",
+    role: "CEO",
+    company: "Vindhya E-Infomedia Pvt Ltd",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=56&h=56&fit=crop&crop=face&fm=webp&q=80",
   },
   {
