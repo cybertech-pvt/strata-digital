@@ -3,15 +3,15 @@
 
  export const FloatingWhatsApp = forwardRef<HTMLDivElement>((_, ref) => {
    return (
-     <div ref={ref} className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <div ref={ref} className="fixed bottom-5 right-5 z-50 flex flex-col gap-2">
       {/* Call Button */}
       <a
         href="tel:+918248827991"
         aria-label="Call us"
-        className="w-14 h-14 bg-teal rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+        className="w-11 h-11 bg-teal rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300 group"
       >
-        <Phone size={26} className="text-white" />
-        <span className="absolute right-16 bg-navy text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+        <Phone size={20} className="text-white" />
+        <span className="absolute right-14 bg-navy text-white text-xs px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
           Call us
         </span>
       </a>
@@ -22,10 +22,10 @@
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300 group animate-pulse"
+        className="w-11 h-11 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 hover:shadow-xl transition-all duration-300 group animate-pulse"
       >
-        <MessageCircle size={28} className="text-white" />
-        <span className="absolute right-16 bg-navy text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+        <MessageCircle size={22} className="text-white" />
+        <span className="absolute right-14 bg-navy text-white text-xs px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
           Chat with us
         </span>
       </a>
