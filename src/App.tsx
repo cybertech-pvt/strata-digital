@@ -98,6 +98,8 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsConditions />} />
               <Route path="/cookies" element={<CookiePolicy />} />
+              <Route path="/refund" element={<RefundPolicy />} />
+              <Route path="/checkout" element={<Checkout />} />
 
               {/* ========================= */}
               {/* CANDIDATE PORTAL MODULE */}
