@@ -26,6 +26,9 @@ const navLinks = [{
   name: "Careers",
   path: "/careers"
 }, {
+  name: "Checkout",
+  path: "/checkout"
+}, {
   name: "Contact",
   path: "/contact"
 }];
