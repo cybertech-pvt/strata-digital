@@ -24,6 +24,7 @@ const footerLinks = {
     { name: "Privacy Policy", path: "/privacy" },
     { name: "Terms & Conditions", path: "/terms" },
     { name: "Cookie Policy", path: "/cookies" },
+    { name: "Refund Policy", path: "/refund" },
   ],
 };
 
