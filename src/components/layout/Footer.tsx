@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Linkedin, Facebook, Instagram, Youtube, Twitter, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
-import logoDark from "@/assets/logo-dark.png";
+import logoCircle from "@/assets/logo-cybervibe-circle.png";
+import logoWordmark from "@/assets/logo-cybervibe-wordmark.png";
 
 const footerLinks = {
   company: [
@@ -46,14 +47,22 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 lg:gap-8">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="mb-4">
-              <img 
-                src={logoDark} 
-                alt="CYBERVIBE Global Solutions" 
-                width={130}
-                height={52}
+            <div className="mb-4 flex items-center gap-3">
+              <img
+                src={logoCircle}
+                alt="CYBERVIBE Global Solutions emblem"
+                width={48}
+                height={48}
                 loading="lazy"
-                className="h-12 w-auto"
+                className="h-12 w-12 rounded-full"
+              />
+              <img
+                src={logoWordmark}
+                alt="CYBERVIBE Global Solutions"
+                width={180}
+                height={48}
+                loading="lazy"
+                className="h-10 w-auto bg-white/95 rounded px-2 py-1"
               />
             </div>
             <p className="text-lime font-medium italic text-sm mb-3">
