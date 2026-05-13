@@ -25,6 +25,8 @@ const JobApply = lazy(() => import("./pages/JobApply"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const Checkout = lazy(() => import("./pages/Checkout"));
 const Contact = lazy(() => import("./pages/Contact"));
 
 // Auth Pages - lazy loaded as they're not needed on initial load
