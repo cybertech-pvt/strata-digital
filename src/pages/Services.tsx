@@ -14,9 +14,12 @@ import {
 
 const services = [
   {
+    id: "software",
     icon: Code2,
     title: "Software Development",
     description: "Custom enterprise software solutions tailored to your unique business requirements, built with cutting-edge technologies for maximum scalability, performance, and maintainability.",
+    price: 49999,
+    priceNote: "Starting from",
     features: [
       "Custom Enterprise Applications",
       "Legacy System Modernization",
@@ -27,9 +30,12 @@ const services = [
     ],
   },
   {
+    id: "web",
     icon: Smartphone,
     title: "Web & Mobile App Development",
     description: "Responsive web applications and native mobile solutions that deliver exceptional user experiences across all devices and platforms.",
+    price: 24999,
+    priceNote: "Starting from",
     features: [
       "Progressive Web Applications",
       "Native iOS & Android Apps",
@@ -40,9 +46,12 @@ const services = [
     ],
   },
   {
+    id: "cloud",
     icon: Cloud,
     title: "Cloud Computing",
     description: "Comprehensive cloud services including migration, architecture design, and managed services across AWS, Azure, and Google Cloud Platform.",
+    price: 14999,
+    priceNote: "Audit from",
     features: [
       "Cloud Migration Strategy",
       "Multi-Cloud Architecture",
@@ -53,9 +62,12 @@ const services = [
     ],
   },
   {
+    id: "security",
     icon: Shield,
     title: "Cybersecurity Solutions",
     description: "Enterprise-grade security services to protect your digital assets, ensure compliance, and build resilient defense systems against evolving threats.",
+    price: 19999,
+    priceNote: "Assessment from",
     features: [
       "Security Assessments & Audits",
       "Threat Detection & Response",
@@ -66,9 +78,12 @@ const services = [
     ],
   },
   {
+    id: "ai",
     icon: Brain,
     title: "AI & Data Analytics",
     description: "Harness the power of artificial intelligence and advanced analytics to unlock actionable insights and drive data-driven decision making.",
+    price: 34999,
+    priceNote: "Starting from",
     features: [
       "Machine Learning Solutions",
       "Predictive Analytics",
@@ -79,9 +94,12 @@ const services = [
     ],
   },
   {
+    id: "consult",
     icon: Lightbulb,
     title: "IT Consulting & Digital Transformation",
     description: "Strategic technology consulting to guide your digital transformation journey and align technology investments with business objectives.",
+    price: 2999,
+    priceNote: "Per hour",
     features: [
       "Digital Strategy Development",
       "Technology Roadmapping",
@@ -92,6 +110,9 @@ const services = [
     ],
   },
 ];
+
+const formatINR = (n: number) =>
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
 const Services = () => {
   return (
@@ -146,12 +167,22 @@ const Services = () => {
                       </div>
                     ))}
                   </div>
-                  <Button asChild className="gradient-cta text-white hover:opacity-90">
-                    <Link to="/contact">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <div className="flex flex-wrap items-baseline gap-2 mb-6">
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground">{service.priceNote}</span>
+                    <span className="text-3xl font-bold text-teal">{formatINR(service.price)}</span>
+                    <span className="text-xs text-muted-foreground">+ 18% GST</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button asChild className="gradient-cta text-white hover:opacity-90">
+                      <Link to={`/checkout?service=${service.id}`}>
+                        Buy Now
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                      <Link to="/contact">Talk to Sales</Link>
+                    </Button>
+                  </div>
                 </div>
                 <div className={index % 2 === 1 ? "lg:order-1" : ""}>
                   <div className="relative">
