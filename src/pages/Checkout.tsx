@@ -10,24 +10,30 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
-import { CreditCard, Lock, ShieldCheck, Mail, Phone, Building2, Smartphone, Wallet, Banknote } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { CreditCard, Lock, ShieldCheck, Mail, Phone, Building2, Smartphone, Wallet, Banknote, CheckCircle2 } from "lucide-react";
 
 const services = [
   { id: "consult", name: "IT Consulting (1 hr)", price: 2999 },
-  { id: "web", name: "Website Starter Package", price: 24999 },
-  { id: "app", name: "Mobile App Development", price: 79999 },
+  { id: "web", name: "Web & Mobile App Development", price: 24999 },
+  { id: "software", name: "Software Development", price: 49999 },
+  { id: "ai", name: "AI & Data Analytics", price: 34999 },
   { id: "cloud", name: "Cloud Migration Audit", price: 14999 },
   { id: "security", name: "Cybersecurity Assessment", price: 19999 },
 ];
 
 const Checkout = () => {
   const { toast } = useToast();
-  const [selected, setSelected] = useState<string>("web");
+  const [searchParams] = useSearchParams();
+  const preselected = searchParams.get("service");
+  const initial = services.find((s) => s.id === preselected)?.id ?? "web";
+  const [selected, setSelected] = useState<string>(initial);
   const [qty, setQty] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [success, setSuccess] = useState(false);
 
   const item = services.find((s) => s.id === selected)!;
   const subtotal = item.price * qty;
