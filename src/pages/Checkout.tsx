@@ -56,12 +56,45 @@ const Checkout = () => {
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
+      setSuccess(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       toast({
-        title: "Order received",
-        description: `Your order of ${formatINR(total)} has been placed. Our team will contact you shortly.`,
+        title: "Order placed successfully",
+        description: `Your order of ${formatINR(total)} has been received.`,
       });
     }, 1200);
   };
+
+  const steps = [
+    { n: 1, label: "Details" },
+    { n: 2, label: "Payment" },
+    { n: 3, label: "Confirm" },
+  ];
+
+  if (success) {
+    return (
+      <Layout>
+        <section className="pt-32 pb-20 bg-background min-h-[70vh]">
+          <div className="container mx-auto px-4 lg:px-8 max-w-2xl text-center">
+            <div className="w-20 h-20 rounded-full bg-lime/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-12 h-12 text-lime" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Thank you for your order!</h1>
+            <p className="text-muted-foreground mb-2">
+              Your order of <span className="font-semibold text-teal">{formatINR(total)}</span> has been received.
+            </p>
+            <p className="text-muted-foreground mb-8">
+              Our team will contact you within 24 hours to kick off your project.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild className="gradient-cta text-white"><Link to="/services">Browse More Services</Link></Button>
+              <Button asChild variant="outline"><Link to="/">Back to Home</Link></Button>
+            </div>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
