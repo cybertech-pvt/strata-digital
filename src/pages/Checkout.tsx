@@ -116,6 +116,27 @@ const Checkout = () => {
         </div>
       </section>
 
+      {/* Stepper */}
+      <section className="bg-background border-b border-border">
+        <div className="container mx-auto px-4 lg:px-8 py-6">
+          <div className="flex items-center justify-center gap-4 md:gap-8">
+            {steps.map((s, i) => (
+              <div key={s.n} className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-colors ${
+                  s.n <= 2 ? "bg-teal text-white" : "bg-muted text-muted-foreground"
+                }`}>
+                  {s.n}
+                </div>
+                <span className={`text-sm font-medium hidden sm:inline ${s.n <= 2 ? "text-foreground" : "text-muted-foreground"}`}>
+                  {s.label}
+                </span>
+                {i < steps.length - 1 && <div className="w-8 md:w-16 h-px bg-border" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
